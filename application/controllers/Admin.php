@@ -581,7 +581,7 @@ class Admin extends CI_Controller
       $tanggal_keluar = $this->input->post('tanggal_keluar', TRUE);
       $lokasi         = $this->input->post('lokasi', TRUE);
       $kode_barang    = $this->input->post('kode_barang', TRUE);
-      // $nama_barang    = $this->input->post('nama_barang', TRUE);
+      $nama_barang    = $this->input->post('nama_barang', TRUE);
       $satuan         = $this->input->post('satuan', TRUE);
       $jumlah         = $this->input->post('jumlah', TRUE);
 
@@ -593,7 +593,7 @@ class Admin extends CI_Controller
         'tanggal_keluar' => $tanggal_keluar,
         'lokasi' => $lokasi,
         'kode_barang' => $kode_barang,
-        // 'nama_barang' => $nama_barang,
+        'nama_barang' => $nama_barang,
         'satuan' => $satuan,
         'jumlah' => $jumlah
       );

@@ -96,6 +96,14 @@
                       <input type="text" name="tanggal" id="tanggal" class="form-control form_datetime" placeholder="Klik Disini">
                     </div>
                   </div>
+                  <!-- prefix add start -->
+                  <!-- <div class="form-group">
+                    <label for="kode_awal" class="col-md-3 control-label text-right">Kode Awal</label>
+                    <div class="col-md-6 col-md-offset-0">
+                      <input type="text" name="kode_awal" id="kode_awal" class="form-control" placeholder="Contoh: la-ci-25-0001">
+                    </div>
+                  </div> -->
+                  <!-- prefix add end -->
                   <div class="form-group">
                     <label for="lokasi" class="col-md-3 control-label text-right">Lokasi</label>
                     <div class="col-md-6 col-md-offset-0">
