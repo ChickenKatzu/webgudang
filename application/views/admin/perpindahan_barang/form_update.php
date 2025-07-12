@@ -42,10 +42,6 @@
                           <input type="text" name="id_transaksi" style="margin-left:84px;width:20%;display:inline;" class="form-control" readonly="readonly" value="<?= $d->id_transaksi ?>">
                       </div>
                       <div class="form-group">
-                        <label for="kode_asset" style="margin-left:220px;display:inline;">Kode Asset</label>
-                        <input type="text" name="kode_asset" style="margin-left:90px;width:20%;display:inline;" class="form-control" placeholder="Klik Disini">
-                      </div>
-                      <div class="form-group">
                         <label for="tanggal" style="margin-left:220px;display:inline;">Tanggal Masuk</label>
                         <input type="text" name="tanggal" style="margin-left:66px;width:20%;display:inline;" class="form-control" readonly="readonly" value="<?= $d->tanggal ?>">
                       </div>
@@ -57,10 +53,34 @@
                         <label for="tanggal_keluar" style="margin-left:220px;display:inline;">Tanggal Keluar</label>
                         <input type="text" name="tanggal_keluar" style="margin-left:66px;width:20%;display:inline;" class="form-control form_datetime" placeholder="Klik Disini">
                       </div>
+                      <!-- <div class="form-group">
+                        <label for="posisi" style="margin-left:220px;display:inline;">Posisi</label>
+                        <input type="text" name="posisi" style="margin-left:122px;width:20%;display:inline;" class="form-control form_datetime" placeholder="Klik Disini">
+                      </div> -->
                       <div class="form-group" style="margin-bottom:40px;">
                         <label for="lokasi" style="margin-left:220px;display:inline;">Lokasi</label>
                         <input type="text" name="lokasi" style="margin-left:117px;width:20%;display:inline;" class="form-control" readonly="readonly" value="<?= $d->lokasi ?>">
                       </div>
+
+                      <!-- checkbox dialog -->
+                      <div class="container">
+                        <div class="col-sm-10">
+                          <div class="form-group row text-center">
+                            <label for="charger" class="text-left">Charger</label>
+                            <input class="form-check-input" type="checkbox" id="blankCheckbox" value="charger" aria-label="...">
+                          </div>
+                          <div class="form-group row text-center">
+                            <label for="headset" class="text-center">Headset</label>
+                            <input class="form-check-input" type="checkbox" id="blankCheckbox" value="headset" aria-label="...">
+                          </div>
+                          <div class="form-group row text-center">
+                            <label for="mouse" class="text-center">Mouse</label>
+                            <input class="form-check-input" type="checkbox" id="blankCheckbox" value="mouse" aria-label="...">
+                          </div>
+                        </div>
+                      </div>
+                      <!-- end dialog -->
+
                       <div class="form-group" style="display:inline-block;">
                         <label for="kode_barang" style="width:87%;margin-left: 12px;">Nama Barang</label>
                         <input type="text" name="kode_barang" style="width: 90%;margin-right: 67px;margin-left: 11px;" class="form-control" id="kode_barang" readonly value="<?= $d->kode_barang ?>">

@@ -58,20 +58,28 @@ class M_admin extends CI_Model
   }
 
   // insert data keluar
-  public function insert_keluar($tabel, $data)
+  public function insert_keluar($table, $data)
   {
-    $this->db->insert($tabel, $data);
+    // return $this->db->insert($table,$data);
+    if (is_array($data) && isset($data[0]) && is_array($data[0])) {
+      // Jika data adalah array multidimensi, maka gunakan insert_batch
+      return $this->db->insert_batch($table, $data);
+    } else {
+      // Jika hanya 1 data (array biasa)
+      return $this->db->insert($table, $data);
+    }
   }
+
 
   // Insert data baru
   public function insert($data)
   {
-    return $this->db->insert('tb_barang_masuk', $data);
-    // if (!empty($data) && is_array($data)) {
-    //   $this->db->insert('tb_barang_masuk', $data);
-    // } else {
-    //   log_message('error', 'Data untuk insert kosong atau bukan array');
-    // }
+    // return $this->db->insert_batch('tb_barang_masuk', $data);
+    if (!empty($data) && is_array($data)) {
+      $this->db->insert('tb_barang_masuk', $data);
+    } else {
+      log_message('error', 'Data untuk insert kosong atau bukan array');
+    }
   }
 
   public function update($tabel, $data, $where)

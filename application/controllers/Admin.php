@@ -333,17 +333,39 @@ class Admin extends CI_Controller
       $tanggal      = $this->input->post('tanggal', TRUE);
       $lokasi       = $this->input->post('lokasi', TRUE);
       $satuan       = $this->input->post('satuan', TRUE);
-      $jumlah       = $this->input->post('jumlah', TRUE);
+      // $jumlah       = $this->input->post('jumlah', TRUE);
+      $jumlah       = (int) $this->input->post('jumlah', TRUE);
 
-      $data = array(
-        'id_transaksi' => $id_transaksi,
-        'tanggal'      => $tanggal,
-        'lokasi'       => $lokasi,
-        'kode_barang'  => $merek,
-        'nama_barang'  => $kategori,
-        'satuan'       => $satuan,
-        'jumlah'       => $jumlah
-      );
+
+      // auto numbering id_transaksi start
+      $parts = explode('-', $id_transaksi); // ['la', 'ci', '25', '0001']
+      $prefix = $parts[0] . '-' . $parts[1] . '-' . $parts[2] . '-';
+      $start = (int) ltrim($parts[3], '0'); // dari 0001 jadi 1
+      $data = [];
+      for ($i = 0; $i < $jumlah; $i++) {
+        $nomor = str_pad($start + $i, 4, '0', STR_PAD_LEFT);
+        $id_transaksi = $prefix . $nomor;
+
+        $data[] = [
+          'id_transaksi' => $id_transaksi,
+          'lokasi'       => $lokasi,
+          'kode_barang'  => $merek,
+          'nama_barang'  => $kategori,
+          'satuan'       => $satuan,
+          'tanggal'       => $tanggal,
+          'jumlah'       => 1
+        ];
+      }
+
+      // $data = array(
+      //   'id_transaksi' => $id_transaksi,
+      //   'tanggal'      => $tanggal,
+      //   'lokasi'       => $lokasi,
+      //   'kode_barang'  => $merek,
+      //   'nama_barang'  => $kategori,
+      //   'satuan'       => $satuan,
+      //   'jumlah'       => $jumlah
+      // );
 
       $this->M_admin->insert($data);
       $data = $this->session->set_flashdata('msg_berhasil', 'Data Barang Berhasil Ditambahkan');
@@ -576,30 +598,30 @@ class Admin extends CI_Controller
     $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'trim|required');
     if ($this->form_validation->run() === TRUE) {
       $id_transaksi   = $this->input->post('id_transaksi', TRUE);
-      $kode_asset     = $this->input->post('kode_asset', TRUE);
+      // $kode_asset     = $this->input->post('kode_asset', TRUE);
       $tanggal_masuk  = $this->input->post('tanggal', TRUE);
       $tanggal_keluar = $this->input->post('tanggal_keluar', TRUE);
       $lokasi         = $this->input->post('lokasi', TRUE);
       $kode_barang    = $this->input->post('kode_barang', TRUE);
-      $nama_barang    = $this->input->post('nama_barang', TRUE);
+      // $nama_barang    = $this->input->post('nama_barang', TRUE);
       $satuan         = $this->input->post('satuan', TRUE);
       $jumlah         = $this->input->post('jumlah', TRUE);
 
       // $where = array('id_transaksi' => $id_transaksi);
       $data = array(
         'id_transaksi' => $id_transaksi,
-        'kode_asset' => $kode_asset,
+        // 'kode_asset' => $kode_asset,
         'tanggal_masuk' => $tanggal_masuk,
         'tanggal_keluar' => $tanggal_keluar,
         'lokasi' => $lokasi,
         'kode_barang' => $kode_barang,
-        'nama_barang' => $nama_barang,
+        // 'nama_barang' => $nama_barang,
         'satuan' => $satuan,
-        'jumlah' => $jumlah
+        'jumlah' => 1
       );
       // echo json_encode($data);
       // die();
-      $this->M_admin->insert('tb_barang_keluar', $data);
+      $this->M_admin->insert_keluar('tb_barang_keluar', $data);
       $this->session->set_flashdata('msg_berhasil_keluar', 'Data Berhasil Keluar');
       redirect(base_url('admin/tabel_barangmasuk'));
     } else {

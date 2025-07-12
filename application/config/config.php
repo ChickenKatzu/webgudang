@@ -30,7 +30,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 // LAN Kemayoran
 // $config['base_url'] = 'http://192.168.11.197/webgudang';
 // WLAN Kemayoran
-// $config['base_url'] = 'http://192.168.17.84/webgudang';
+$config['base_url'] = 'http://192.168.17.84/webgudang';
 // $config['base_url'] = 'http://192.168.17.85/webgudang';
 // LAN Cideng "Unset"
 // $config['base_url] = '';
@@ -38,7 +38,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 // $config['base_url'] = 'http://192.162.16.177/webgudang';
 // $config['base_url'] = 'http://192.162.17.223/webgudang';
 // $config['base_url'] = 'http://192.168.252.51/webgudang';
-$config['base_url'] = 'http://192.168.17.209/webgudang';
+// $config['base_url'] = 'http://192.168.17.209/webgudang';
+// $config['base_url'] = 'http://192.168.15.144/webgudang';
 // API local settings
 // $config['base_url'] = 'http://localhost/webgudang';
 
