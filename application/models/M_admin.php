@@ -60,27 +60,27 @@ class M_admin extends CI_Model
   // insert data keluar
   public function insert_keluar($table, $data)
   {
-    // return $this->db->insert($table,$data);
-    if (is_array($data) && isset($data[0]) && is_array($data[0])) {
-      // Jika data adalah array multidimensi, maka gunakan insert_batch
-      return $this->db->insert_batch($table, $data);
-    } else {
-      // Jika hanya 1 data (array biasa)
-      return $this->db->insert($table, $data);
-    }
+    // Ubah menjadi single insert saja
+    return $this->db->insert($table, $data);
   }
 
+  // Tambahkan fungsi untuk update stok
+  public function update_stok_masuk($id_transaksi, $kode_barang, $jumlah_keluar)
+  {
+    $this->db->where('id_transaksi', $id_transaksi)
+      ->where('kode_barang', $kode_barang)
+      ->set('jumlah', 'jumlah-' . $jumlah_keluar, FALSE)
+      ->update('tb_barang_masuk');
+
+    return $this->db->affected_rows();
+  }
 
   // Insert data baru
-  public function insert($data)
+  public function insert_batch($table, $data)
   {
-    // return $this->db->insert_batch('tb_barang_masuk', $data);
-    if (!empty($data) && is_array($data)) {
-      $this->db->insert('tb_barang_masuk', $data);
-    } else {
-      log_message('error', 'Data untuk insert kosong atau bukan array');
-    }
+    return $this->db->insert_batch($table, $data);
   }
+
 
   public function update($tabel, $data, $where)
   {

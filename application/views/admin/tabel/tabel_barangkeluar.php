@@ -48,7 +48,6 @@
                   <th>Jumlah</th>
                   <th>Details</th>
                   <th>Resignation</th>
-                  <!-- <th></th> -->
                 </tr>
               </thead>
               <tbody>

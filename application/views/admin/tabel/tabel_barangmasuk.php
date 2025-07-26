@@ -44,7 +44,7 @@
               <thead>
                 <tr>
                   <th>No</th>
-                  <th>ID_Transaksi</th>
+                  <th>Id Transaksi</th>
                   <th>Tanggal</th>
                   <th>Lokasi</th>
                   <th>Kode Barang</th>
@@ -95,9 +95,6 @@
           </div>
           <!-- /.box-body -->
         </div>
-
-
-
         <!-- /.box -->
       </div>
       <!-- /.col -->
