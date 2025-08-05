@@ -53,10 +53,6 @@
                         <label for="tanggal_keluar" style="margin-left:220px;display:inline;">Tanggal Keluar</label>
                         <input type="text" name="tanggal_keluar" style="margin-left:66px;width:20%;display:inline;" class="form-control form_datetime" placeholder="Klik Disini">
                       </div>
-                      <!-- <div class="form-group">
-                        <label for="posisi" style="margin-left:220px;display:inline;">Posisi</label>
-                        <input type="text" name="posisi" style="margin-left:122px;width:20%;display:inline;" class="form-control form_datetime" placeholder="Klik Disini">
-                      </div> -->
                       <div class="form-group" style="margin-bottom:40px;">
                         <label for="lokasi" style="margin-left:220px;display:inline;">Lokasi</label>
                         <input type="text" name="lokasi" style="margin-left:117px;width:20%;display:inline;" class="form-control" readonly="readonly" value="<?= $d->lokasi ?>">

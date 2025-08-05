@@ -54,13 +54,17 @@ class M_admin extends CI_Model
   // Dapatkan 1 record by id_transaksi
   public function getById($id_transaksi)
   {
-    return $this->db->get_where('tb_barang_masuk', ['id_transaksi' => $id_transaksi])->row();
+    $this->db->where('id_transaksi', $id_transaksi);
+    return $this->db->get('tb_barang_masuk')->row();
   }
+  // public function getById($id_transaksi)
+  // {
+  //   return $this->db->get_where('tb_barang_masuk', ['id_transaksi' => $id_transaksi])->row();
+  // }
 
   // insert data keluar
   public function insert_keluar($table, $data)
   {
-    // Ubah menjadi single insert saja
     return $this->db->insert($table, $data);
   }
 
@@ -91,6 +95,11 @@ class M_admin extends CI_Model
   public function delete($table, $where)
   {
     return $this->db->delete($table, $where);
+  }
+  public function delete_item($id_transaksi)
+  {
+    $this->db->where('id_transaksi', $id_transaksi);
+    return $this->db->delete('tb_barang_masuk');
   }
 
   // function delete($where,$table)

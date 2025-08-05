@@ -279,16 +279,6 @@ class Admin extends CI_Controller
   // DATA BARANG MASUK
   ####################################
 
-  public function form_barangmasuk()
-  {
-    $data['list_satuan'] = $this->M_admin->select('tb_satuan');
-    $data['id_transaksi'] = '';
-    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
-    $this->load->view('header/header', $data);
-    $this->load->view('admin/form_barangmasuk/form_insert', $data);
-    $this->load->view('footer/footer', $data);
-  }
-
   public function tabel_barangmasuk()
   {
     $data = array(
@@ -300,24 +290,15 @@ class Admin extends CI_Controller
     $this->load->view('footer/footer', $data);
   }
 
-  public function update_barang($id_transaksi)
+  public function form_barangmasuk()
   {
-    $where = array('id_transaksi' => $id_transaksi);
-    $data['data_barang_update'] = $this->M_admin->get_data('tb_barang_masuk', $where);
     $data['list_satuan'] = $this->M_admin->select('tb_satuan');
+    $data['id_transaksi'] = '';
     $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
     $this->load->view('header/header', $data);
-    $this->load->view('admin/form_barangmasuk/form_update', $data);
+    $this->load->view('admin/form_barangmasuk/form_insert', $data);
     $this->load->view('footer/footer', $data);
   }
-
-  public function delete_barang($id_transaksi)
-  {
-    $where = array('id_transaksi' => $id_transaksi);
-    $this->M_admin->delete('tb_barang_masuk', $where);
-    redirect(base_url('admin/tabel_barangmasuk'));
-  }
-
 
   public function proses_databarang_masuk_insert()
   {
@@ -410,6 +391,16 @@ class Admin extends CI_Controller
   // }
 
 
+  public function update_barang($id_transaksi)
+  {
+    $where = array('id_transaksi' => $id_transaksi);
+    $data['data_barang_update'] = $this->M_admin->get_data('tb_barang_masuk', $where);
+    $data['list_satuan'] = $this->M_admin->select('tb_satuan');
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/form_barangmasuk/form_update', $data);
+    $this->load->view('footer/footer', $data);
+  }
 
   public function proses_databarang_masuk_update()
   {
@@ -466,6 +457,20 @@ class Admin extends CI_Controller
   // END DATA BARANG MASUK
   ####################################
 
+  ####################################
+  // START DATA DELETE BARANG
+  ####################################
+
+  public function delete_barang($id_transaksi)
+  {
+    $where = array('id_transaksi' => $id_transaksi);
+    $this->M_admin->delete('tb_barang_masuk', $where);
+    redirect(base_url('admin/tabel_barangmasuk'));
+  }
+
+  ####################################
+  // END DATA DELETE BARANG
+  ####################################
 
   ####################################
   // SATUAN
@@ -569,7 +574,7 @@ class Admin extends CI_Controller
   // DATA MASUK KE DATA KELUAR
   ####################################
 
-  public function barang_keluar($id)
+  public function barang_keluar()
   {
     $uri = $this->uri->segment(3);
     $where = array('id_transaksi' => $uri);
@@ -580,51 +585,39 @@ class Admin extends CI_Controller
     $this->load->view('admin/perpindahan_barang/form_update', $data);
     $this->load->view('footer/footer', $data);
   }
-
   public function proses_data_keluar()
   {
     $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'trim|required');
-
     if ($this->form_validation->run() === TRUE) {
-      $this->db->trans_start(); // Mulai transaction
+      $id_transaksi   = $this->input->post('id_transaksi', TRUE);
+      // $kode_asset     = $this->input->post('kode_asset', TRUE);
+      $tanggal_masuk  = $this->input->post('tanggal', TRUE);
+      $tanggal_keluar = $this->input->post('tanggal_keluar', TRUE);
+      $lokasi         = $this->input->post('lokasi', TRUE);
+      $kode_barang    = $this->input->post('kode_barang', TRUE);
+      // $nama_barang    = $this->input->post('nama_barang', TRUE);
+      $satuan         = $this->input->post('satuan', TRUE);
+      $jumlah         = $this->input->post('jumlah', TRUE);
 
-      $id_transaksi = $this->input->post('id_transaksi', TRUE);
-      $kode_barang = $this->input->post('kode_barang', TRUE);
-
-      // 1. Dapatkan data barang yang akan keluar
-      $barang = $this->M_admin->getById($id_transaksi);
-
-      // 2. Insert ke tabel barang keluar (SINGLE INSERT)
-      $data_keluar = array(
+      // $where = array('id_transaksi' => $id_transaksi);
+      $data = array(
         'id_transaksi' => $id_transaksi,
-        'tanggal_masuk' => $barang->tanggal,
-        'tanggal_keluar' => $this->input->post('tanggal_keluar', TRUE),
-        'lokasi' => $barang->lokasi,
+        // 'kode_asset' => $kode_asset,
+        'tanggal_masuk' => $tanggal_masuk,
+        'tanggal_keluar' => $tanggal_keluar,
+        'lokasi' => $lokasi,
         'kode_barang' => $kode_barang,
-        'nama_barang' => $barang->nama_barang,
-        'satuan' => $barang->satuan,
+        // 'nama_barang' => $nama_barang,
+        'satuan' => $satuan,
         'jumlah' => 1
       );
-
-      $this->db->insert('tb_barang_keluar', $data_keluar);
-
-      // 3. Kurangi stok di tabel barang masuk
-      $this->db->where('id_transaksi', $id_transaksi)
-        ->where('kode_barang', $kode_barang)
-        ->set('jumlah', 'jumlah-1', FALSE)
-        ->update('tb_barang_masuk');
-
-      $this->db->trans_complete(); // Selesai transaction
-
-      if ($this->db->trans_status() === FALSE) {
-        $this->session->set_flashdata('msg_gagal', 'Gagal memproses barang keluar');
-      } else {
-        $this->session->set_flashdata('msg_berhasil_keluar', 'Data Berhasil Keluar');
-      }
-
+      // echo json_encode($data);
+      // die();
+      $this->M_admin->insert_keluar('tb_barang_keluar', $data);
+      $this->session->set_flashdata('msg_berhasil_keluar', 'Data Berhasil Keluar');
       redirect(base_url('admin/tabel_barangmasuk'));
     } else {
-      $this->barang_keluar($this->input->post('id_transaksi'));
+      $this->load->view('perpindahan_barang/form_update/' . $id_transaksi);
     }
   }
 
