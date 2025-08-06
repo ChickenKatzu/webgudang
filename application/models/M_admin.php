@@ -65,7 +65,9 @@ class M_admin extends CI_Model
   // insert data keluar
   public function insert_keluar($table, $data)
   {
-    return $this->db->insert($table, $data);
+    $this->db->where('id_transaksi', $id_transaksi);
+    $this->db->limit(1);  // Hapus hanya 1 baris
+    return $this->db->delete('tb_barang_masuk');
   }
 
   // Tambahkan fungsi untuk update stok
@@ -82,7 +84,12 @@ class M_admin extends CI_Model
   // Insert data baru
   public function insert_batch($table, $data)
   {
-    return $this->db->insert_batch($table, $data);
+    $this->db->insert_batch($table, $data);
+    if ($this->db->affected_rows() > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
 
