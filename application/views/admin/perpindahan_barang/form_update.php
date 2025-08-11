@@ -38,6 +38,7 @@
                     <div class="box-body">
                       <div class="form-group">
                         <?php foreach ($list_data as $d) { ?>
+                          <input type="hidden" name="id" value="<?= $d->id ?>">
                           <label for="id_transaksi" style="margin-left:220px;display:inline;">ID Transaksi</label>
                           <input type="text" name="id_transaksi" style="margin-left:84px;width:20%;display:inline;" class="form-control" readonly="readonly" value="<?= $d->id_transaksi ?>">
                       </div>

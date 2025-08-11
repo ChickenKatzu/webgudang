@@ -9,8 +9,12 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/web_admin/bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Bootstarp 5.3.7 -->
+    <!-- <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/bootstrap.min.css"> -->
     <!-- Font Awesome -->
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/web_admin/bower_components/font-awesome/css/font-awesome.min.css">
+    <!-- Font Awesome 5 -->
+    <link rel="stylesheet" href="<?php echo base_url() ?>assets/fontawesome2/css/fonetawesome.min.css">
     <!-- Ionicons -->
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/web_admin/bower_components/Ionicons/css/ionicons.min.css">
     <!-- Theme style -->
@@ -142,6 +146,9 @@
                             <li class="<?= ($segment == 'form_barangmasuk') ? 'active' : '' ?>">
                                 <a href="<?= base_url('admin/form_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Tambah Data Barang Masuk</a>
                             </li>
+                            <li class="<?= ($segment == 'form_barangmasuk') ? 'active' : '' ?>">
+                                <a href="<?= base_url('admin/form_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Tambah Data Barang Masuk 2</a>
+                            </li>
                             <li class="<?= ($segment == 'form_resignation') ? 'active' : '' ?>">
                                 <a href="<?= base_url('admin/form_resignation') ?>"><i class="fa fa-circle-o"></i> Tambah Data Resignation</a>
                             </li>
@@ -151,7 +158,7 @@
                         </ul>
                     </li>
 
-                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
+                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'form_aset_masuk', 'tabel_barangmasuk2', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
                         <a href="treeview-menu">
                             <i class="fa fa-book"></i> <span>Laporan</span>
                             <span class="pull-right-container">
@@ -160,6 +167,7 @@
                         </a>
                         <ul class="treeview-menu">
                             <li class="<?= ($segment == 'tabel_barangmasuk') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk</a></li>
+                            <li class="<?= ($segment == 'tabel_barangmasuk2') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk 2</a></li>
                             <li class="<?= ($segment == 'tabel_barangkeluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangkeluar') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Keluar</a></li>
                             <li class="<?= ($segment == 'tabel_satuan') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_satuan') ?>"><i class="fa fa-circle-o"></i> Laporan Satuan</a></li>
                         </ul>

@@ -51,24 +51,45 @@ class M_admin extends CI_Model
     return $this->db->get('tb_barang_masuk')->result();
   }
 
-  // Dapatkan 1 record by id_transaksi
-  public function getById($id_transaksi)
-  {
-    $this->db->where('id_transaksi', $id_transaksi);
-    return $this->db->get('tb_barang_masuk')->row();
-  }
   // public function getById($id_transaksi)
   // {
   //   return $this->db->get_where('tb_barang_masuk', ['id_transaksi' => $id_transaksi])->row();
   // }
 
   // insert data keluar
+
+  //////////////////////////////////////////////
+  ////////// PERLU DIRUBAH ////////////////////
+  // Fungsi untuk INSERT data ke tabel barang keluar
+
+  // Dapatkan 1 record by id_transaksi
+  // public function getById($id_transaksi)
+  // {
+  //   $this->db->where('id_transaksi', $id_transaksi);
+  //   return $this->db->get('tb_barang_masuk')->row();
+  // }
+
+  public function getById($id)
+  {
+    return $this->db->get_where('tb_barang_masuk', ['id' => $id])->row();
+  }
+
   public function insert_keluar($table, $data)
   {
-    $this->db->where('id_transaksi', $id_transaksi);
-    $this->db->limit(1);  // Hapus hanya 1 baris
-    return $this->db->delete('tb_barang_masuk');
+    return $this->db->insert($table, $data);
   }
+
+  // Fungsi untuk DELETE 1 baris dari tb_barang_masuk
+  public function delete_one_item($id)
+  {
+    $this->db->where('id', $id);
+    return $this->db->delete('tb_barang_masuk');
+    // echo $this->db->last_query();
+    // die();
+    return $result;
+  }
+  ///////////// END OF PERLU DIRUBAH //////////////
+
 
   // Tambahkan fungsi untuk update stok
   public function update_stok_masuk($id_transaksi, $kode_barang, $jumlah_keluar)
@@ -321,4 +342,205 @@ class M_admin extends CI_Model
 
     return $query->result();
   }
+
+
+  // new function barang masuk not used yet 
+  // Insert data
+  public function insert_barang($data)
+  {
+    return $this->db->insert('tb_aset', $data);
+  }
+
+  // Get all data with pagination
+  public function get_barang($limit, $start, $search = null)
+  {
+    if ($search) {
+      $this->db->like('nama_aset', $search);
+      $this->db->or_like('kode_aset', $search);
+      $this->db->or_like('lokasi', $search);
+    }
+    $this->db->limit($limit, $start);
+    $this->db->order_by('id', 'DESC');
+    return $this->db->get('tb_aset')->result();
+  }
+
+  // Count all data
+  public function count_barang($search = null)
+  {
+    if ($search) {
+      $this->db->like('nama_aset', $search);
+      $this->db->or_like('kode_aset', $search);
+      $this->db->or_like('lokasi', $search);
+    }
+    return $this->db->count_all_results('tb_aset');
+  }
+
+  // start of aset masuk
+  // ASET MASUK
+  public function insert_masuk($data)
+  {
+    return $this->db->insert('tb_aset_masuk', $data);
+  }
+
+  public function get_aset_masuk($limit, $start)
+  {
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  // ASET KELUAR
+  public function get_aset_tersedia()
+  {
+    return $this->db->query("
+            SELECT * FROM tb_aset_masuk 
+            WHERE kode_aset NOT IN (SELECT kode_aset FROM tb_aset_keluar)
+        ")->result();
+  }
+
+  public function insert_aset_keluar($data)
+  {
+    return $this->db->insert('tb_aset_keluar', $data);
+  }
+  // end of aset masuk
+
+  // start of aset masuk part 2
+  public function generate_kode_aset($tipe)
+  {
+    $prefix_map = [
+      'Laptop' => '01',
+      'Monitor' => '02',
+      'Router' => '03',
+      'Firewall' => '04'
+    ];
+
+    $prefix = isset($prefix_map[$tipe]) ? $prefix_map[$tipe] : '00';
+
+    $this->db->like('kode_aset', 'IT-' . $prefix . '-', 'after');
+    $this->db->order_by('kode_aset', 'DESC');
+    $this->db->limit(1);
+    $last_asset = $this->db->get('tb_aset_masuk')->row();
+
+    $last_number = 0;
+    if ($last_asset) {
+      $parts = explode('-', $last_asset->kode_aset);
+      $last_number = (int)end($parts);
+    }
+
+    $new_number = str_pad($last_number + 1, 4, '0', STR_PAD_LEFT);
+    return 'IT-' . $prefix . '-' . $new_number;
+  }
+
+  // CRUD Aset Masuk
+  public function create_aset_masuk($data)
+  {
+    return $this->db->insert('tb_aset_masuk', $data);
+  }
+
+  public function get_all_aset_masuk()
+  {
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  public function get_aset_masuk_by_kode($kode_aset)
+  {
+    return $this->db->get_where('tb_aset_masuk', ['kode_aset' => $kode_aset])->row();
+  }
+
+  // CRUD Aset Keluar
+  public function create_aset_keluar($data)
+  {
+    return $this->db->insert('tb_aset_keluar', $data);
+  }
+
+  public function get_all_aset_keluar()
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    return $this->db->get()->result();
+  }
+
+  // Cek apakah aset sudah keluar
+  public function is_aset_keluar($kode_aset)
+  {
+    return $this->db->get_where('tb_aset_keluar', ['kode_aset' => $kode_aset])->num_rows() > 0;
+  }
+  // Fungsi untuk Aset Masuk dengan pagination dan search
+  public function get_aset_masuk_paginated($limit, $start, $search = null)
+  {
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  // Hitung total Aset Masuk untuk pagination
+  public function count_all_aset_masuk($search = null)
+  {
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
+
+  // Fungsi untuk Aset Keluar dengan pagination dan search
+  public function get_aset_keluar_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get()->result();
+  }
+
+  // Hitung total Aset Keluar untuk pagination
+  public function count_all_aset_keluar($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+
+
+  // end of aset masuk part 2
 }

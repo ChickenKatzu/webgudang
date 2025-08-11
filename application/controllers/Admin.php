@@ -18,6 +18,7 @@ class Admin extends CI_Controller
     $this->load->helper('form');
     $this->load->library('form_validation');
     $this->load->helper(array('form', 'url'));
+    $this->load->library('pagination');
   }
 
   public function index()
@@ -308,6 +309,7 @@ class Admin extends CI_Controller
     $this->form_validation->set_rules('jumlah', 'Jumlah', 'required|numeric');
 
     if ($this->form_validation->run() == TRUE) {
+      // $id           = $this->input->post('id', TRUE); // format awal dari input (misalnya: la-ci-25-0001)
       $id_transaksi = $this->input->post('id_transaksi', TRUE); // format awal dari input (misalnya: la-ci-25-0001)
       $kategori     = $this->input->post('kategori', TRUE);
       $merek        = $this->input->post('merek', TRUE);
@@ -325,10 +327,11 @@ class Admin extends CI_Controller
 
       for ($i = 0; $i < $jumlah; $i++) {
         $nomor = str_pad($start + $i, 4, '0', STR_PAD_LEFT);
-        $new_id_transaksi = $prefix . $nomor;
+        $id_transaksi = $prefix . $nomor;
 
         $data_batch[] = [
-          'id_transaksi' => $new_id_transaksi,
+          // 'id' => $id,
+          'id_transaksi' => $id_transaksi,
           'tanggal'      => $tanggal,
           'lokasi'       => $lokasi,
           'kode_barang'  => $merek,
@@ -587,37 +590,45 @@ class Admin extends CI_Controller
   }
   public function proses_data_keluar()
   {
-    $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'trim|required');
-    if ($this->form_validation->run() === TRUE) {
-      $id_transaksi   = $this->input->post('id_transaksi', TRUE);
-      // $kode_asset     = $this->input->post('kode_asset', TRUE);
-      $tanggal_masuk  = $this->input->post('tanggal', TRUE);
-      $tanggal_keluar = $this->input->post('tanggal_keluar', TRUE);
-      $lokasi         = $this->input->post('lokasi', TRUE);
-      $kode_barang    = $this->input->post('kode_barang', TRUE);
-      // $nama_barang    = $this->input->post('nama_barang', TRUE);
-      $satuan         = $this->input->post('satuan', TRUE);
-      $jumlah         = $this->input->post('jumlah', TRUE);
+    $this->form_validation->set_rules('id', 'ID Barang', 'required|numeric');
 
-      // $where = array('id_transaksi' => $id_transaksi);
-      $data = array(
-        'id_transaksi' => $id_transaksi,
-        // 'kode_asset' => $kode_asset,
-        'tanggal_masuk' => $tanggal_masuk,
-        'tanggal_keluar' => $tanggal_keluar,
-        'lokasi' => $lokasi,
-        'kode_barang' => $kode_barang,
-        // 'nama_barang' => $nama_barang,
-        'satuan' => $satuan,
+    if ($this->form_validation->run() === TRUE) {
+      $this->db->trans_start();
+
+      $id = $this->input->post('id', TRUE);
+      $barang = $this->M_admin->getById($id); // Ambil data berdasarkan ID
+
+      if (!$barang) {
+        $this->session->set_flashdata('msg_gagal', 'Barang tidak ditemukan!');
+        redirect($_SERVER['HTTP_REFERER']);
+      }
+
+      // Data untuk tabel keluar
+      $data_keluar = [
+        'id_transaksi' => $barang->id_transaksi,
+        'tanggal_masuk' => $barang->tanggal,
+        'tanggal_keluar' => $this->input->post('tanggal_keluar'),
+        'lokasi' => $barang->lokasi,
+        'kode_barang' => $barang->kode_barang,
+        'nama_barang' => $barang->nama_barang,
+        'satuan' => $barang->satuan,
         'jumlah' => 1
-      );
-      // echo json_encode($data);
-      // die();
-      $this->M_admin->insert_keluar('tb_barang_keluar', $data);
-      $this->session->set_flashdata('msg_berhasil_keluar', 'Data Berhasil Keluar');
-      redirect(base_url('admin/tabel_barangmasuk'));
+      ];
+
+      $this->M_admin->insert_keluar('tb_barang_keluar', $data_keluar);
+      $this->M_admin->delete_one_item($id); // Hapus berdasarkan ID
+
+      $this->db->trans_complete();
+
+      if ($this->db->trans_status() === FALSE) {
+        $this->session->set_flashdata('msg_gagal', 'Proses gagal!');
+      } else {
+        $this->session->set_flashdata('msg_berhasil_keluar', 'Barang berhasil dikeluarkan');
+      }
+      redirect('admin/tabel_barangmasuk');
     } else {
-      $this->load->view('perpindahan_barang/form_update/' . $id_transaksi);
+      $this->session->set_flashdata('msg_gagal', 'Validasi gagal!');
+      redirect($_SERVER['HTTP_REFERER']);
     }
   }
 
@@ -673,4 +684,267 @@ class Admin extends CI_Controller
 
 
 
+  #############################################
+  // END OF PT INFO TEKNO SIAGA REQUEST NEEDED
+  #############################################
+
+
+
+  #############################################
+  // START OF PT INFO TEKNO SIAGA REQUEST NEEDED PART 2
+  #############################################
+  public function tabel_barangmasuk2()
+  {
+    $per_page = $this->input->get('per_page') ?? 10;
+    $search = $this->input->get('search');
+    // Pagination config
+    $config['base_url'] = base_url('barang');
+    $config['total_rows'] = $this->M_admin->count_barang($search);
+    $config['per_page'] = $per_page;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'per_page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('per_page') ?: 0;
+
+    $data = array(
+      'avatar' => $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name')),
+      'barang' => $this->M_admin->get_barang($config['per_page'], $page, $search),
+      'pagination' => $this->pagination->create_links(),
+      'per_page' => $per_page,
+      'search' => $search
+    );
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_barangmasuk2', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+
+  // Here is form for barang masuk 2
+  public function form_barangmasuk2()
+  {
+    $data['list_satuan'] = $this->M_admin->select('tb_satuan');
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/form_barangmasuk/form_insert2', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+
+  public function insert()
+  {
+    $this->form_validation->set_rules('nama', 'Nama', 'required');
+    $this->form_validation->set_rules('namaAset', 'Nama Aset', 'required');
+    // Add more validation rules as needed
+
+    if ($this->form_validation->run() == TRUE) {
+      $data = array(
+        'nama' => $this->input->post('nama'),
+        'nama_aset' => $this->input->post('namaAset'),
+        'kode_aset' => $this->input->post('kodeAset'),
+        'lokasi' => $this->input->post('lokasi'),
+        'departemen' => $this->input->post('departement'),
+        'kondisi' => $this->input->post('condition'),
+        'merk' => $this->input->post('merk'),
+        'tipe' => $this->input->post('type'),
+        'ram' => $this->input->post('ram'),
+        'os' => $this->input->post('operatingSystem'),
+        'chm_mouse' => ($this->input->post('mouse')) ? 1 : 0,
+        'chm_charger' => ($this->input->post('charger')) ? 1 : 0,
+        'chm_headset' => ($this->input->post('headset')) ? 1 : 0,
+        'chm_code' => $this->input->post('chmCode'),
+        'serial_number' => $this->input->post('sNSerialNumber'),
+        'condition_details' => $this->input->post('conditionDetails'),
+        'created_at' => date('Y-m-d H:i:s')
+      );
+
+      $this->M_admin->insert_barang($data);
+      $this->session->set_flashdata('msg_berhasil', 'Data barang berhasil ditambahkan');
+      redirect('barang');
+    } else {
+      $this->session->set_flashdata('error', validation_errors());
+      redirect('barang/form');
+    }
+  }
+
+  // start of aset masuk
+  // ASET MASUK
+  public function form_masuk()
+  {
+    $this->load->view('aset_masuk_form');
+  }
+
+  public function insert_masuk()
+  {
+    $data = [
+      'kode_aset' => $this->input->post('kode_aset'),
+      'nama_barang' => $this->input->post('nama_barang'),
+      'merk' => $this->input->post('merk'),
+      'tipe' => $this->input->post('tipe'),
+      'serial_number' => $this->input->post('serial_number'),
+      'kondisi' => $this->input->post('kondisi'),
+      'tanggal_masuk' => $this->input->post('tanggal_masuk')
+    ];
+
+    $this->M_aset->insert_masuk($data);
+    redirect('aset/daftar_masuk');
+  }
+
+  // ASET KELUAR
+  public function form_keluar()
+  {
+    $data['aset_tersedia'] = $this->M_aset->get_aset_tersedia();
+    $this->load->view('aset_keluar_form', $data);
+  }
+
+  public function insert_keluar()
+  {
+    $data = [
+      'kode_aset' => $this->input->post('kode_aset'),
+      'tanggal_keluar' => $this->input->post('tanggal_keluar'),
+      'penerima' => $this->input->post('penerima'),
+      'lokasi_tujuan' => $this->input->post('lokasi_tujuan'),
+      'keterangan' => $this->input->post('keterangan')
+    ];
+
+    $this->M_aset->insert_keluar($data);
+    redirect('aset/daftar_keluar');
+  }
+
+  // DAFTAR ASET
+  public function daftar_masuk()
+  {
+    // Implement pagination similar to previous example
+  }
+
+  public function daftar_keluar()
+  {
+    // Implement pagination similar to previous example
+  }
+  // END OF ASET MASUK
+
+  // start of aset masuk part 2
+  public function index_aset()
+  {
+    $data['title'] = 'Manajemen Aset';
+    $this->load->view('aset/index', $data);
+  }
+
+  // Form Aset Masuk
+  public function masuk()
+  {
+    if ($_POST) {
+      $this->form_validation->set_rules('nama_barang', 'Nama Barang', 'required');
+      $this->form_validation->set_rules('tipe', 'Tipe', 'required');
+
+      if ($this->form_validation->run()) {
+        $kode_aset = $this->M_admin->generate_kode_aset($this->input->post('tipe'));
+
+        $data = [
+          'kode_aset' => $kode_aset,
+          'nama_barang' => $this->input->post('nama_barang'),
+          'merk' => $this->input->post('merk'),
+          'tipe' => $this->input->post('tipe'),
+          'serial_number' => $this->input->post('serial_number'),
+          'lokasi' => $this->input->post('lokasi'),
+          'kondisi' => $this->input->post('kondisi'),
+          'tanggal_masuk' => $this->input->post('tanggal_masuk')
+        ];
+
+        if ($this->M_admin->create_aset_masuk($data)) {
+          $this->session->set_flashdata('success', 'Aset berhasil ditambahkan');
+          redirect('aset/list_masuk');
+        }
+      }
+    }
+
+    $data['title'] = 'Form Aset Masuk';
+    $this->load->view('aset/form_masuk', $data);
+  }
+
+  // Form Aset Keluar
+  public function keluar($kode_aset = null)
+  {
+    if ($_POST) {
+      $this->form_validation->set_rules('kode_aset', 'Kode Aset', 'required');
+      $this->form_validation->set_rules('nama_penerima', 'Nama Penerima', 'required');
+      $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'required');
+
+      if ($this->form_validation->run()) {
+        $data = [
+          'kode_aset' => $this->input->post('kode_aset'),
+          'nama_penerima' => $this->input->post('nama_penerima'),
+          'posisi_penerima' => $this->input->post('posisi_penerima'),
+          'tanggal_keluar' => $this->input->post('tanggal_keluar')
+        ];
+
+        if ($this->M_admin->create_aset_keluar($data)) {
+          $this->session->set_flashdata('success', 'Aset berhasil dikeluarkan');
+          redirect('aset/list_keluar');
+        }
+      }
+    }
+
+    $data['title'] = 'Form Aset Keluar';
+    $data['asset'] = $kode_aset ? $this->M_admin->get_aset_masuk_by_kode($kode_aset) : null;
+    $this->load->view('aset/form_keluar', $data);
+  }
+
+  // List Aset Masuk
+  public function list_masuk()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk');
+    $config['total_rows'] = $this->M_admin->count_all_aset_masuk($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Aset Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+
+    $this->load->view('aset/list_masuk', $data);
+  }
+
+  // List Aset Keluar dengan pagination dan search
+  public function list_keluar()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar');
+    $config['total_rows'] = $this->M_admin->count_all_aset_keluar($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Aset Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+
+    $this->load->view('aset/list_keluar', $data);
+  }
 }
+
+#############################################
+// END OF PT INFO TEKNO SIAGA REQUEST NEEDED PART 2
+#############################################
