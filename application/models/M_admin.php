@@ -317,13 +317,24 @@ class M_admin extends CI_Model
     return $query->result();
   }
 
-  public function sum($tabel, $field)
+  // Hitung barang masuk yang lokasinya tidak null
+  public function count_masuk()
   {
-    $query = $this->db->select_sum($field)
-      ->from($tabel)
-      ->get();
-    return $query->result();
+    $this->db->where('lokasi IS NOT NULL');
+    return $this->db->count_all_results('tb_aset_masuk');
   }
+  public function count_keluar($table, $column)
+  {
+    $this->db->select('nama_penerima, COUNT(*) as total');
+    $this->db->group_by('nama_penerima');
+    return $this->db->get('tb_aset_keluar')->result(); // Return array of objects
+  }
+  public function count_rows($table)
+  {
+    $this->db->select('COUNT(*) as total');
+    return $this->db->get($table)->row()->total;
+  }
+
 
   public function numrows($tabel)
   {
@@ -541,6 +552,631 @@ class M_admin extends CI_Model
     return $this->db->count_all_results('tb_aset_keluar');
   }
 
+  // Kembalikan Aset
+  // public function kembalikan_aset($kode_aset, $data_kembali)
+  // {
+  //   $this->db->trans_start();
+  //   $this->db->where('kode_aset', $kode_aset);
+  //   $this->db->update('tb_aset_masuk', ['status' => 'tersedia']);
+  //   $this->db->where('kode_aset', $kode_aset);
+  //   $this->db->delete('tb_aset_keluar');
+  //   $this->db->trans_complete();
+  //   return $this->db->trans_status();
+  // }
 
-  // end of aset masuk part 2
+  // public function get_aset_keluar_with_join()
+  // {
+  //   $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+  //   $this->db->from('tb_aset_keluar');
+  //   $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+  //   return $this->db->get()->result();
+  // }
+
+  public function kembalikan_aset($kode_aset)
+  {
+    $this->db->where('kode_aset', $kode_aset);
+    $delete = $this->db->delete('tb_aset_keluar');
+
+    if ($delete) {
+      $this->db->where('kode_aset', $kode_aset);
+      $update = $this->db->update('tb_aset_masuk', [
+        'tanggal_masuk' => date('Y-m-d'),
+        'lokasi' => 'gudang'
+      ]);
+
+      return $update;
+    }
+
+    return false;
+  }
+
+  // Fungsi untuk menghitung jumlah aset masuk berdasarkan tipe laptop
+  public function count_aset_masuk_laptop($search = null)
+  {
+    $this->db->where('tipe', 'laptop'); // Filter hanya laptop
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
+
+  public function get_aset_masuk_laptop_paginated($limit, $start, $search = null)
+  {
+    $this->db->where('tipe', 'laptop'); // Filter hanya laptop
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  public function count_aset_keluar_laptop($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'laptop'); // Filter hanya laptop
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+
+  public function get_aset_keluar_laptop_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'laptop'); // Filter hanya laptop
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get()->result();
+  }
+  public function count_aset_masuk_monitor($search = null)
+  {
+    $this->db->where('tipe', 'monitor'); // Filter hanya monitor
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
+
+  public function get_aset_masuk_monitor_paginated($limit, $start, $search = null)
+  {
+    $this->db->where('tipe', 'monitor'); // Filter hanya monitor
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  public function count_aset_keluar_monitor($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'monitor'); // Filter hanya monitor
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+
+  public function get_aset_keluar_monitor_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'monitor'); // Filter hanya monitor
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get()->result();
+  }
+
+  // model untuk firewall
+  public function count_aset_masuk_firewall($search = null)
+  {
+    $this->db->where('tipe', 'firewall'); // Filter hanya firewall
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
+
+  public function get_aset_masuk_firewall_paginated($limit, $start, $search = null)
+  {
+    $this->db->where('tipe', 'firewall'); // Filter hanya firewall
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  public function count_aset_keluar_firewall($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'firewall'); // Filter hanya firewall
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+
+  public function get_aset_keluar_firewall_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'firewall'); // Filter hanya firewall
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get()->result();
+  }
+
+  // model untuk router switch
+  public function count_aset_masuk_router($search = null)
+  {
+    $this->db->where('tipe', 'router'); // Filter hanya router
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
+
+  public function get_aset_masuk_router_paginated($limit, $start, $search = null)
+  {
+    $this->db->where('tipe', 'router'); // Filter hanya router
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  public function count_aset_keluar_router($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'router'); // Filter hanya router
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+
+  public function get_aset_keluar_router_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'router'); // Filter hanya router
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get()->result();
+  }
+
+  // model untuk pc
+  public function count_aset_masuk_pc($search = null)
+  {
+    $this->db->where('tipe', 'pc'); // Filter hanya PC
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
+
+  public function get_aset_masuk_pc_paginated($limit, $start, $search = null)
+  {
+    $this->db->where('tipe', 'pc'); // Filter hanya PC
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  public function count_aset_keluar_pc($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'pc'); // Filter hanya PC
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+
+  public function get_aset_keluar_pc_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'pc'); // Filter hanya PC
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get()->result();
+  }
+
+  // model untuk cctv
+  public function count_aset_masuk_cctv($search = null)
+  {
+    $this->db->where('tipe', 'cctv'); // Filter hanya CCTV
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
+
+  public function get_aset_masuk_cctv_paginated($limit, $start, $search = null)
+  {
+    $this->db->where('tipe', 'cctv'); // Filter hanya CCTV
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  public function count_aset_keluar_cctv($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'cctv'); // Filter hanya CCTV
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+  public function get_aset_keluar_cctv_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'cctv'); // Filter hanya CCTV
+    $this->db->limit($limit, $start);
+  }
+
+  // model untuk wifi ap
+  public function count_aset_masuk_wifi_ap($search = null)
+  {
+    $this->db->where('tipe', 'wifi_ap'); // Filter hanya WiFi AP
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
+
+  public function get_aset_masuk_wifi_ap_paginated($limit, $start, $search = null)
+  {
+    $this->db->where('tipe', 'wifi_ap'); // Filter hanya WiFi AP
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+
+  public function count_aset_keluar_wifi_ap($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'wifi_ap'); // Filter hanya WiFi AP
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+
+  public function get_aset_keluar_wifi_ap_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'wifi_ap'); // Filter hanya WiFi AP
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get()->result();
+  }
+
+  // model untuk server
+  public function count_aset_masuk_server($search = null)
+  {
+    $this->db->where('tipe', 'server'); // Filter hanya Server
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+  }
+  public function get_aset_masuk_server_paginated($limit, $start, $search = null)
+  {
+    $this->db->where('tipe', 'server'); // Filter hanya Server
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('kode_aset', $search);
+      $this->db->or_like('nama_barang', $search);
+      $this->db->or_like('merk', $search);
+      $this->db->or_like('tipe', $search);
+      $this->db->or_like('serial_number', $search);
+      $this->db->or_like('lokasi', $search);
+      $this->db->group_end();
+    }
+    $this->db->limit($limit, $start);
+    return $this->db->get('tb_aset_masuk')->result();
+  }
+  public function count_aset_keluar_server($search = null)
+  {
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'server'); // Filter hanya Server
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+    return $this->db->count_all_results('tb_aset_keluar');
+  }
+  public function get_aset_keluar_server_paginated($limit, $start, $search = null)
+  {
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->from('tb_aset_keluar');
+    $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.tipe', 'server'); // Filter hanya Server
+    $this->db->limit($limit, $start);
+
+    if ($search) {
+      $this->db->group_start();
+      $this->db->like('tb_aset_keluar.kode_aset', $search);
+      $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+      $this->db->or_like('tb_aset_masuk.merk', $search);
+      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+      $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+      $this->db->group_end();
+    }
+
+    return $this->db->get()->result();
+  }
 }
+// end of aset masuk part 2

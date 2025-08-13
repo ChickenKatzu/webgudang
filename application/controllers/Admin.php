@@ -25,8 +25,8 @@ class Admin extends CI_Controller
   {
     if ($this->session->userdata('status') == 'login' && $this->session->userdata('role') == 1) {
       $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
-      $data['stokBarangMasuk'] = $this->M_admin->sum('tb_barang_masuk', 'jumlah');
-      $data['stokBarangKeluar'] = $this->M_admin->sum('tb_barang_keluar', 'jumlah');
+      $data['totalBarangMasuk'] = $this->M_admin->count_rows('tb_aset_masuk');
+      $data['totalBarangKeluar'] = $this->M_admin->count_rows('tb_aset_keluar');
       $data['dataUser'] = $this->M_admin->numrows('user');
       $this->load->view('header/header', $data);
       $this->load->view('admin/index', $data);
@@ -829,7 +829,11 @@ class Admin extends CI_Controller
   public function index_aset()
   {
     $data['title'] = 'Manajemen Aset';
-    $this->load->view('aset/index', $data);
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/index', $data);
+    $this->load->view('footer/footer', $data);
   }
 
   // Form Aset Masuk
@@ -861,7 +865,11 @@ class Admin extends CI_Controller
     }
 
     $data['title'] = 'Form Aset Masuk';
-    $this->load->view('aset/form_masuk', $data);
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/form_barangmasuk/form_aset_masuk', $data);
+    $this->load->view('footer/footer', $data);
   }
 
   // Form Aset Keluar
@@ -889,10 +897,14 @@ class Admin extends CI_Controller
 
     $data['title'] = 'Form Aset Keluar';
     $data['asset'] = $kode_aset ? $this->M_admin->get_aset_masuk_by_kode($kode_aset) : null;
-    $this->load->view('aset/form_keluar', $data);
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/perpindahan_barang/form_aset_keluar', $data);
+    $this->load->view('footer/footer', $data);
   }
 
-  // List Aset Masuk
+  // List Aset Masuk All
   public function list_masuk()
   {
     $config = array();
@@ -914,9 +926,15 @@ class Admin extends CI_Controller
     $data['pagination'] = $this->pagination->create_links();
     $data['per_page'] = $per_page;
     $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
 
-    $this->load->view('aset/list_masuk', $data);
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk', $data);
+    $this->load->view('footer/footer', $data);
   }
+
+
 
   // List Aset Keluar dengan pagination dan search
   public function list_keluar()
@@ -940,8 +958,533 @@ class Admin extends CI_Controller
     $data['pagination'] = $this->pagination->create_links();
     $data['per_page'] = $per_page;
     $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
 
-    $this->load->view('aset/list_keluar', $data);
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function kembalikan($kode_aset)
+  {
+    if ($this->M_admin->kembalikan_aset($kode_aset)) {
+      $this->session->set_flashdata('success', 'Aset berhasil dikembalikan');
+    } else {
+      $this->session->set_flashdata('error', 'Gagal mengembalikan aset');
+    }
+    redirect('aset/list_keluar');
+  }
+
+  // list aset masuk laptop
+  public function list_masuk_laptop()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_laptop');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_laptop($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar laptop Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_laptop_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_laptop', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_laptop()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_laptop');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_laptop($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar laptop Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_laptop_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_laptop', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar monitor
+  public function list_masuk_monitor()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_monitor');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_monitor($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Monitor Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_monitor_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_monitor', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_monitor()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_monitor');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_monitor($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Monitor Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_monitor_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_monitor', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar firewall
+  public function list_masuk_firewall()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_firewall');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_firewall($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Firewall Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_firewall_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_firewall', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_firewall()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_firewall');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_firewall($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Firewall Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_firewall_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_firewall', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar router/switch
+  public function list_masuk_router_switch()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_router_switch');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_router_switch($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Router/Switch Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_router_switch_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_router_switch', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar pc
+  public function list_masuk_pc()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_pc');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_pc($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar PC Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_pc_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_pc', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_pc()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_pc');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_pc($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar PC Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_pc_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_pc', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar cctv/dvr
+  public function list_masuk_cctv_dvr()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_cctv_dvr');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_cctv_dvr($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar CCTV/DVR Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_cctv_dvr_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_cctv_dvr', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_cctv_dvr()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_cctv_dvr');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_cctv_dvr($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar CCTV/DVR Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_cctv_dvr_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_cctv_dvr', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar wifi/ap
+  public function list_masuk_wifi_ap()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_wifi_ap');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_wifi_ap($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar WiFi/AP Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_wifi_ap_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_wifi_ap', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_wifi_ap()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_wifi_ap');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_wifi_ap($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar WiFi/AP Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_wifi_ap_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_wifi_ap', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar server
+  public function list_masuk_server()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_server');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_server($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+    $data['title'] = 'Daftar Server Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_server_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_server', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_server()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_server');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_server($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Server Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_server_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_server', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar projector
+  public function list_masuk_projector()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_projector');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_projector($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+    $data['title'] = 'Daftar Projector Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_projector_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_projector', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  // list aset masuk keluar harddisk
+  public function list_masuk_harddisk()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_harddisk');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_harddisk($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+    $data['title'] = 'Daftar Harddisk Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_harddisk_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_harddisk', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_harddisk()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_harddisk');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_harddisk($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Harddisk Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_harddisk_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_harddisk', $data);
+    $this->load->view('footer/footer', $data);
   }
 }
 

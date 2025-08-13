@@ -30,7 +30,7 @@
 
       <div class="row">
         <div class="col-md-6">
-          <a href="<?php echo site_url('aset/keluar'); ?>" class="btn btn-warning">Tambah Aset Keluar</a>
+          <a href="<?php echo site_url('aset/list_masuk'); ?>" class="btn btn-warning">Tambah Aset Keluar</a>
           <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>
         </div>
         <div class="col-md-6">

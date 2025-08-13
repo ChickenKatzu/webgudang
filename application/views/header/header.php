@@ -34,16 +34,16 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
 
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-yellow sidebar-mini">
     <div class="wrapper">
 
         <header class="main-header">
             <!-- Logo -->
             <a href="<?php echo base_url('admin') ?>" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><b>A</b>LT</span>
+                <span class="logo-mini"><b>A</b>DP</span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>Admin</b>LTE</span>
+                <span class="logo-lg"><b>Ada</b>Pundi</span>
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top">
@@ -135,7 +135,7 @@
                     $segment = $this->uri->segment(2); // 'form_barangmasuk', 'form_resignation', etc
                     ?>
 
-                    <li class="treeview <?= in_array($segment, ['form_barangmasuk', 'form_resignation', 'form_satuan']) ? 'active' : '' ?>">
+                    <li class="treeview <?= in_array($segment, ['form_barangmasuk', 'form_aset_masuk', 'form_barangmasuk2', 'form_resignation', 'form_satuan']) ? 'active' : '' ?>">
                         <a href="#">
                             <i class="fa fa-edit"></i> <span>Forms</span>
                             <span class="pull-right-container">
@@ -143,22 +143,25 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li class="<?= ($segment == 'form_barangmasuk') ? 'active' : '' ?>">
+                            <!-- <li class="<?= ($segment == 'form_barangmasuk') ? 'active' : '' ?>">
                                 <a href="<?= base_url('admin/form_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Tambah Data Barang Masuk</a>
                             </li>
-                            <li class="<?= ($segment == 'form_barangmasuk') ? 'active' : '' ?>">
+                            <li class="<?= ($segment == 'form_barangmasuk2') ? 'active' : '' ?>">
                                 <a href="<?= base_url('admin/form_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Tambah Data Barang Masuk 2</a>
+                            </li> -->
+                            <li class="<?= ($segment == 'form_aset_masuk') ? 'active' : '' ?>">
+                                <a href="<?= base_url('aset/masuk') ?>"><i class="fa fa-circle-o"></i>Tambah Data Aset Masuk</a>
                             </li>
-                            <li class="<?= ($segment == 'form_resignation') ? 'active' : '' ?>">
+                            <!-- <li class="<?= ($segment == 'form_resignation') ? 'active' : '' ?>">
                                 <a href="<?= base_url('admin/form_resignation') ?>"><i class="fa fa-circle-o"></i> Tambah Data Resignation</a>
                             </li>
                             <li class="<?= ($segment == 'form_satuan') ? 'active' : '' ?>">
                                 <a href="<?= base_url('admin/form_satuan') ?>"><i class="fa fa-circle-o"></i> Tambah Satuan Barang</a>
-                            </li>
+                            </li> -->
                         </ul>
                     </li>
 
-                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'form_aset_masuk', 'tabel_barangmasuk2', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
+                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'list_masuk', 'list_keluar', 'tabel_barangmasuk2', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
                         <a href="treeview-menu">
                             <i class="fa fa-book"></i> <span>Laporan</span>
                             <span class="pull-right-container">
@@ -166,13 +169,53 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li class="<?= ($segment == 'tabel_barangmasuk') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk</a></li>
-                            <li class="<?= ($segment == 'tabel_barangmasuk2') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk 2</a></li>
-                            <li class="<?= ($segment == 'tabel_barangkeluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangkeluar') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Keluar</a></li>
-                            <li class="<?= ($segment == 'tabel_satuan') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_satuan') ?>"><i class="fa fa-circle-o"></i> Laporan Satuan</a></li>
+                            <!-- <li class="<?= ($segment == 'tabel_barangmasuk') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk</a></li>
+                            <li class="<?= ($segment == 'tabel_barangmasuk2') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk 2</a></li> -->
+                            <li class="<?= ($segment == 'list_masuk') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk') ?>"><i class="fa fa-circle-o"></i> Laporan aset masuk</a></li>
+                            <li class="<?= ($segment == 'list_keluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar') ?>"><i class="fa fa-circle-o"></i> Laporan aset keluar</a></li>
+                            <!-- <li class="<?= ($segment == 'tabel_barangkeluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangkeluar') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Keluar</a></li>
+                            <li class="<?= ($segment == 'tabel_satuan') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_satuan') ?>"><i class="fa fa-circle-o"></i> Laporan Satuan</a></li> -->
                         </ul>
                     </li>
                     <li>
+                        <!-- Sub Laporan Aset Masuk -->
+                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'list_masuk_laptop', 'list_masuk_fiewall', 'list_masuk_monitor', 'tabel_barangmasuk2', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
+                        <a href="treeview-menu">
+                            <i class="fa fa-book"></i> <span>Sub Laporan Aset masuk</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <!-- <li class="<?= ($segment == 'tabel_barangmasuk') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk</a></li>
+                            <li class="<?= ($segment == 'tabel_barangmasuk2') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk 2</a></li> -->
+                            <li class="<?= ($segment == 'list_masuk_laptop') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk_laptop') ?>"><i class="fa fa-circle-o"></i> Laptop</a></li>
+                            <li class="<?= ($segment == 'list_masuk_monitor') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk_monitor') ?>"><i class="fa fa-circle-o"></i> Monitor</a></li>
+                            <li class="<?= ($segment == 'list_masuk_firewall') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk_firewall') ?>"><i class="fa fa-circle-o"></i> Firewall</a></li>
+                            <!-- <li class="<?= ($segment == 'list_keluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar') ?>"><i class="fa fa-circle-o"></i> Firewall</a></li> -->
+                            <!-- <li class="<?= ($segment == 'tabel_barangkeluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangkeluar') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Keluar</a></li>
+                            <li class="<?= ($segment == 'tabel_satuan') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_satuan') ?>"><i class="fa fa-circle-o"></i> Laporan Satuan</a></li> -->
+                        </ul>
+                    </li>
+                    <!-- Sub Laporan Aset Keluar -->
+                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'list_keluar_monitor', 'list_keluar_firewall', 'list_keluar_laptop', 'tabel_barangmasuk2', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
+                        <a href="treeview-menu">
+                            <i class="fa fa-book"></i> <span>Sub Laporan Aset Keluar</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <!-- <li class="<?= ($segment == 'tabel_barangmasuk') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk</a></li>
+                            <li class="<?= ($segment == 'tabel_barangmasuk2') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk 2</a></li> -->
+                            <li class="<?= ($segment == 'list_keluar_laptop') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_laptop') ?>"><i class="fa fa-circle-o"></i> Laptop</a></li>
+                            <li class="<?= ($segment == 'list_keluar_monitor') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_monitor') ?>"><i class="fa fa-circle-o"></i> Monitor</a></li>
+                            <li class="<?= ($segment == 'list_keluar_firewall') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_firewall') ?>"><i class="fa fa-circle-o"></i> Firewall</a></li>
+                            <!-- <li class="<?= ($segment == 'list_keluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar') ?>"><i class="fa fa-circle-o"></i> Firewall</a></li> -->
+                            <!-- <li class="<?= ($segment == 'tabel_barangkeluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangkeluar') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Keluar</a></li>
+                            <li class="<?= ($segment == 'tabel_satuan') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_satuan') ?>"><i class="fa fa-circle-o"></i> Laporan Satuan</a></li> -->
+                        </ul>
+                    </li>
                     <li class="header">LABELS</li>
                     <li>
                         <a href="<?php echo base_url('admin/profile') ?>">

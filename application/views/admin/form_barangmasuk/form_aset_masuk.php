@@ -22,89 +22,87 @@
     <div class="container">
       <h2><?php echo $title; ?></h2>
 
+      <?php if (validation_errors()): ?>
+        <div class="alert alert-danger">
+          <?php echo validation_errors(); ?>
+        </div>
+      <?php endif; ?>
+
       <?php if ($this->session->flashdata('success')): ?>
         <div class="alert alert-success">
           <?php echo $this->session->flashdata('success'); ?>
         </div>
       <?php endif; ?>
 
-      <div class="row">
-        <div class="col-md-6">
-          <a href="<?php echo site_url('aset/masuk'); ?>" class="btn btn-primary">Tambah Aset Masuk</a>
-          <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>
+      <form method="post" action="<?php echo site_url('aset/masuk'); ?>">
+        <div class="form-group">
+          <label>Nama Barang</label>
+          <!-- <input type="text" name="nama_barang" class="form-control" required> -->
+          <select name="nama_barang" class="form-control" required>
+            <option value="">Pilih Tipe</option>
+            <option value="T480">T480 </option>
+            <option value="IP320">IP320 </option>
+            <option value="T490">T490 </option>
+            <option value="T470">T470 </option>
+          </select>
         </div>
-        <div class="col-md-6">
-          <form method="get" action="<?php echo site_url('aset/list_masuk'); ?>" class="form-inline pull-right">
-            <div class="form-group">
-              <input type="text" name="search" class="form-control" placeholder="Cari..." value="<?php echo $search; ?>">
-            </div>
-            <button type="submit" class="btn btn-default">Cari</button>
-          </form>
-        </div>
-      </div>
 
-      <div class="row mt-3">
-        <div class="col-md-12">
-          <form method="get" action="<?php echo site_url('aset/list_masuk'); ?>" class="form-inline">
-            <input type="hidden" name="search" value="<?php echo $search; ?>">
-            <div class="form-group">
-              <label>Tampilkan: </label>
-              <select name="per_page" class="form-control" onchange="this.form.submit()">
-                <option value="5" <?php echo $per_page == 5 ? 'selected' : ''; ?>>5</option>
-                <option value="10" <?php echo $per_page == 10 ? 'selected' : ''; ?>>10</option>
-                <option value="15" <?php echo $per_page == 15 ? 'selected' : ''; ?>>15</option>
-                <option value="20" <?php echo $per_page == 20 ? 'selected' : ''; ?>>20</option>
-                <option value="25" <?php echo $per_page == 25 ? 'selected' : ''; ?>>25</option>
-              </select>
-            </div>
-          </form>
+        <div class="form-group">
+          <label>Merk</label>
+          <!-- <input type="text" name="merk" class="form-control" required> -->
+          <select name="merk" class="form-control" required>
+            <option value="">Pilih Tipe</option>
+            <option value="Lenovo">Lenovo </option>
+            <option value="Asus">Asus </option>
+            <option value="Dell">Dell </option>
+            <option value="MacBook">MacBook </option>
+          </select>
         </div>
-      </div>
 
-      <table class="table table-bordered table-striped mt-3">
-        <thead>
-          <tr>
-            <th>Kode Aset</th>
-            <th>Nama Barang</th>
-            <th>Tipe</th>
-            <th>Merk</th>
-            <th>Lokasi</th>
-            <th>Tanggal Masuk</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php if (count($assets) > 0): ?>
-            <?php foreach ($assets as $asset): ?>
-              <tr>
-                <td><?php echo $asset->kode_aset; ?></td>
-                <td><?php echo $asset->nama_barang; ?></td>
-                <td><?php echo $asset->tipe; ?></td>
-                <td><?php echo $asset->merk; ?></td>
-                <td><?php echo $asset->lokasi; ?></td>
-                <td><?php echo date('d/m/Y', strtotime($asset->tanggal_masuk)); ?></td>
-                <td>
-                  <?php if (!$this->Aset_model->is_aset_keluar($asset->kode_aset)): ?>
-                    <a href="<?php echo site_url('aset/keluar/' . $asset->kode_aset); ?>" class="btn btn-warning btn-sm">Keluar</a>
-                  <?php else: ?>
-                    <span class="label label-success">Sudah Keluar</span>
-                  <?php endif; ?>
-                </td>
-              </tr>
-            <?php endforeach; ?>
-          <?php else: ?>
-            <tr>
-              <td colspan="7" class="text-center">Tidak ada data ditemukan</td>
-            </tr>
-          <?php endif; ?>
-        </tbody>
-      </table>
-
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <?php echo $pagination; ?>
+        <div class="form-group">
+          <label>Tipe</label>
+          <select name="tipe" class="form-control" required>
+            <option value="">Pilih Tipe</option>
+            <option value="Laptop">Laptop (01)</option>
+            <option value="Monitor">Monitor (02)</option>
+            <option value="Router">Router (03)</option>
+            <option value="Firewall">Firewall (04)</option>
+          </select>
         </div>
-      </div>
+
+        <div class="form-group">
+          <label>Serial Number</label>
+          <input type="text" name="serial_number" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label>Lokasi</label>
+          <select name="lokasi" class="form-control" required>
+            <option value="">Pilih Lokasi</option>
+            <option value="cideng">Cideng</option>
+            <option value="bungur">Bungur</option>
+            <option value="cp">CP</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Kondisi</label>
+          <select name="kondisi" class="form-control" required>
+            <option value="">Pilih Kondisi</option>
+            <option value="Baik">Baik</option>
+            <option value="Rusak Ringan">Rusak Ringan</option>
+            <option value="Rusak Berat">Rusak Berat</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tanggal Masuk</label>
+          <input type="date" name="tanggal_masuk" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>
+      </form>
     </div>
   </section>
   <!-- input form end -->
