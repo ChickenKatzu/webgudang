@@ -1486,7 +1486,64 @@ class Admin extends CI_Controller
     $this->load->view('admin/tabel/tabel_aset_keluar_harddisk', $data);
     $this->load->view('footer/footer', $data);
   }
+
+  //  list aset masuk keluar rack server
+  public function list_masuk_rack_server()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_masuk_rack_server');
+    $config['total_rows'] = $this->M_admin->count_aset_masuk_rack_server($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+    $data['title'] = 'Daftar Rack Server Masuk';
+    $data['assets'] = $this->M_admin->get_aset_masuk_rack_server_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_masuk_rack_server', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
+  public function list_keluar_rack_server()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/list_keluar_rack_server');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_rack_server($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Rack Server Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_rack_server_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_rack_server', $data);
+    $this->load->view('footer/footer', $data);
+  }
 }
+
 
 #############################################
 // END OF PT INFO TEKNO SIAGA REQUEST NEEDED PART 2

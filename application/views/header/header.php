@@ -179,7 +179,7 @@
                     </li>
                     <li>
                         <!-- Sub Laporan Aset Masuk -->
-                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'list_masuk_laptop', 'list_masuk_fiewall', 'list_masuk_monitor', 'tabel_barangmasuk2', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
+                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'list_masuk_laptop', 'list_masuk_firewall', 'list_masuk_monitor', 'tabel_barangmasuk2', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
                         <a href="treeview-menu">
                             <i class="fa fa-book"></i> <span>Sub Laporan Aset masuk</span>
                             <span class="pull-right-container">
