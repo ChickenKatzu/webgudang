@@ -27,6 +27,12 @@ class Admin extends CI_Controller
       $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
       $data['totalBarangMasuk'] = $this->M_admin->count_rows('tb_aset_masuk');
       $data['totalBarangKeluar'] = $this->M_admin->count_rows('tb_aset_keluar');
+      $data['stokBarangMasukCideng'] = $this->M_admin->numrows_cideng_all_masuk('tb_aset_masuk');
+      $data['stokBarangKeluarCideng'] = $this->M_admin->numrows_cideng_all_keluar('tb_aset_keluar');
+      $data['stokBarangMasukBungur'] = $this->M_admin->numrows_bungur_all_masuk('tb_aset_masuk');
+      $data['stockBarangKeluarBungur'] = $this->M_admin->numrows_bungur_all_keluar('tb_aset_keluar');
+      $data['stockBarangMasukCapitalPlace'] = $this->M_admin->numrows_capital_all_masuk('tb_aset_masuk');
+      $data['stockBarangKeluarCapitalPlace'] = $this->M_admin->numrows_capital_all_keluar('tb_aset_keluar');
       $data['dataUser'] = $this->M_admin->numrows('user');
       $this->load->view('header/header', $data);
       $this->load->view('admin/index', $data);
@@ -813,18 +819,6 @@ class Admin extends CI_Controller
     redirect('aset/daftar_keluar');
   }
 
-  // DAFTAR ASET
-  public function daftar_masuk()
-  {
-    // Implement pagination similar to previous example
-  }
-
-  public function daftar_keluar()
-  {
-    // Implement pagination similar to previous example
-  }
-  // END OF ASET MASUK
-
   // start of aset masuk part 2
   public function index_aset()
   {
@@ -915,6 +909,22 @@ class Admin extends CI_Controller
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
 
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
+
     $this->pagination->initialize($config);
 
     $page = $this->input->get('page') ?: 0;
@@ -946,6 +956,21 @@ class Admin extends CI_Controller
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -980,12 +1005,27 @@ class Admin extends CI_Controller
   public function list_masuk_laptop()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_laptop');
+    $config['base_url'] = site_url('aset/masuk_laptop');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_laptop($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1008,12 +1048,27 @@ class Admin extends CI_Controller
   public function list_keluar_laptop()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_laptop');
+    $config['base_url'] = site_url('aset/keluar_laptop');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_laptop($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1037,12 +1092,27 @@ class Admin extends CI_Controller
   public function list_masuk_monitor()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_monitor');
+    $config['base_url'] = site_url('aset/masuk_monitor');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_monitor($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1065,12 +1135,27 @@ class Admin extends CI_Controller
   public function list_keluar_monitor()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_monitor');
+    $config['base_url'] = site_url('aset/keluar_monitor');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_monitor($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1094,12 +1179,27 @@ class Admin extends CI_Controller
   public function list_masuk_firewall()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_firewall');
+    $config['base_url'] = site_url('aset/masuk_firewall');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_firewall($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1122,12 +1222,27 @@ class Admin extends CI_Controller
   public function list_keluar_firewall()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_firewall');
+    $config['base_url'] = site_url('aset/keluar_firewall');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_firewall($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1151,12 +1266,27 @@ class Admin extends CI_Controller
   public function list_masuk_router_switch()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_router_switch');
+    $config['base_url'] = site_url('aset/masuk_router_switch');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_router_switch($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1176,16 +1306,74 @@ class Admin extends CI_Controller
     $this->load->view('footer/footer', $data);
   }
 
+  public function list_keluar_router_switch()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/keluar_router_switch');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_router_switch($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Router/Switch Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_router_switch_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_router_switch', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
   // list aset masuk keluar pc
   public function list_masuk_pc()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_pc');
+    $config['base_url'] = site_url('aset/masuk_pc');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_pc($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1208,12 +1396,27 @@ class Admin extends CI_Controller
   public function list_keluar_pc()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_pc');
+    $config['base_url'] = site_url('aset/keluar_pc');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_pc($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1237,12 +1440,27 @@ class Admin extends CI_Controller
   public function list_masuk_cctv_dvr()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_cctv_dvr');
+    $config['base_url'] = site_url('aset/masuk_cctv_dvr');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_cctv_dvr($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1265,12 +1483,27 @@ class Admin extends CI_Controller
   public function list_keluar_cctv_dvr()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_cctv_dvr');
+    $config['base_url'] = site_url('aset/keluar_cctv_dvr');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_cctv_dvr($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1294,12 +1527,27 @@ class Admin extends CI_Controller
   public function list_masuk_wifi_ap()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_wifi_ap');
+    $config['base_url'] = site_url('aset/masuk_wifi_ap');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_wifi_ap($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1322,12 +1570,27 @@ class Admin extends CI_Controller
   public function list_keluar_wifi_ap()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_wifi_ap');
+    $config['base_url'] = site_url('aset/keluar_wifi_ap');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_wifi_ap($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1351,12 +1614,27 @@ class Admin extends CI_Controller
   public function list_masuk_server()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_server');
+    $config['base_url'] = site_url('aset/masuk_server');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_server($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1378,12 +1656,27 @@ class Admin extends CI_Controller
   public function list_keluar_server()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_server');
+    $config['base_url'] = site_url('aset/keluar_server');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_server($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1407,12 +1700,27 @@ class Admin extends CI_Controller
   public function list_masuk_projector()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_projector');
+    $config['base_url'] = site_url('aset/masuk_projector');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_projector($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1431,16 +1739,74 @@ class Admin extends CI_Controller
     $this->load->view('footer/footer', $data);
   }
 
+  public function list_keluar_projector()
+  {
+    $config = array();
+    $config['base_url'] = site_url('aset/keluar_projector');
+    $config['total_rows'] = $this->M_admin->count_aset_keluar_projector($this->input->get('search'));
+    $config['per_page'] = $this->input->get('per_page') ?: 10;
+    $config['page_query_string'] = TRUE;
+    $config['query_string_segment'] = 'page';
+    $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
+
+    $this->pagination->initialize($config);
+
+    $page = $this->input->get('page') ?: 0;
+    $per_page = $this->input->get('per_page') ?: 10;
+    $search = $this->input->get('search');
+
+    $data['title'] = 'Daftar Projector Keluar';
+    $data['assets'] = $this->M_admin->get_aset_keluar_projector_paginated($per_page, $page, $search);
+    $data['pagination'] = $this->pagination->create_links();
+    $data['per_page'] = $per_page;
+    $data['search'] = $search;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/tabel/tabel_aset_keluar_projector', $data);
+    $this->load->view('footer/footer', $data);
+  }
+
   // list aset masuk keluar harddisk
   public function list_masuk_harddisk()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_harddisk');
+    $config['base_url'] = site_url('aset/masuk_harddisk');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_harddisk($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1462,12 +1828,27 @@ class Admin extends CI_Controller
   public function list_keluar_harddisk()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_harddisk');
+    $config['base_url'] = site_url('aset/keluar_harddisk');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_harddisk($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1491,12 +1872,27 @@ class Admin extends CI_Controller
   public function list_masuk_rack_server()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_masuk_rack_server');
+    $config['base_url'] = site_url('aset/masuk_rack_server');
     $config['total_rows'] = $this->M_admin->count_aset_masuk_rack_server($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 
@@ -1518,12 +1914,27 @@ class Admin extends CI_Controller
   public function list_keluar_rack_server()
   {
     $config = array();
-    $config['base_url'] = site_url('aset/list_keluar_rack_server');
+    $config['base_url'] = site_url('aset/keluar_rack_server');
     $config['total_rows'] = $this->M_admin->count_aset_keluar_rack_server($this->input->get('search'));
     $config['per_page'] = $this->input->get('per_page') ?: 10;
     $config['page_query_string'] = TRUE;
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
+
+    $config['full_tag_open'] = '<ul class="pagination">';
+    $config['full_tag_close'] = '</ul>';
+    $config['first_tag_open'] = '<li>';
+    $config['first_tag_close'] = '</li>';
+    $config['last_tag_open'] = '<li>';
+    $config['last_tag_close'] = '</li>';
+    $config['next_tag_open'] = '<li>';
+    $config['next_tag_close'] = '</li>';
+    $config['prev_tag_open'] = '<li>';
+    $config['prev_tag_close'] = '</li>';
+    $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    $config['cur_tag_close'] = '</a></li>';
+    $config['num_tag_open'] = '<li>';
+    $config['num_tag_close'] = '</li>';
 
     $this->pagination->initialize($config);
 

@@ -64,26 +64,31 @@
       <table class="table table-bordered table-striped mt-3">
         <thead>
           <tr>
+            <th>No</th>
             <th>Kode Aset</th>
             <th>Nama Barang</th>
             <th>Tipe</th>
             <th>Nama Penerima</th>
             <th>Posisi Penerima</th>
             <th>Tanggal Keluar</th>
+            <th>Lokasi</th>
             <th>Aksi</th>
           </tr>
         </thead>
 
         <tbody>
           <?php if (count($assets) > 0): ?>
+            <?php $no = 1; ?>
             <?php foreach ($assets as $asset): ?>
               <tr>
+                <td><?php echo $no ?></td>
                 <td><?php echo $asset->kode_aset; ?></td>
                 <td><?php echo $asset->nama_barang; ?></td>
                 <td><?php echo $asset->tipe; ?></td>
                 <td><?php echo $asset->nama_penerima; ?></td>
                 <td><?php echo ucfirst($asset->posisi_penerima); ?></td>
                 <td><?php echo date('d/m/Y', strtotime($asset->tanggal_keluar)); ?></td>
+                <td><?php echo ucfirst($asset->lokasi); ?></td>
                 <td>
                   <button onclick="confirmKembalikan('<?php echo $asset->kode_aset; ?>')"
                     class="btn btn-info btn-sm">
@@ -91,6 +96,7 @@
                   </button>
                 </td>
               </tr>
+              <?php $no++; ?>
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
@@ -100,11 +106,15 @@
         </tbody>
       </table>
 
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <?php echo $pagination; ?>
-        </div>
+      <!-- pagination -->
+      <div class="container">
+        <nav class="text-center">
+          <ul class="pagination">
+            <?php echo $pagination; ?>
+          </ul>
+        </nav>
       </div>
+      <!-- end of pagination -->
     </div>
   </section>
 

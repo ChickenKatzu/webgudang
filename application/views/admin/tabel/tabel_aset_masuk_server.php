@@ -2,7 +2,7 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Tabel Barang Masuk Firewall
+      Tabel Barang Masuk PC
     </h1>
     <ol class="breadcrumb">
       <li><a href="<?= base_url('admin') ?>"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -28,7 +28,7 @@
           <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>
         </div>
         <div class="col-md-6">
-          <form method="get" action="<?php echo site_url('aset/masuk_firewall'); ?>" class="form-inline pull-right">
+          <form method="get" action="<?php echo site_url('aset/masuk_server'); ?>" class="form-inline pull-right">
             <div class="form-group">
               <input type="text" name="search" class="form-control" placeholder="Cari..." value="<?php echo $search; ?>">
             </div>
@@ -39,7 +39,7 @@
 
       <div class="row mt-3">
         <div class="col-md-12">
-          <form method="get" action="<?php echo site_url('aset/masuk_firewall'); ?>" class="form-inline">
+          <form method="get" action="<?php echo site_url('aset/masuk_server'); ?>" class="form-inline">
             <input type="hidden" name="search" value="<?php echo $search; ?>">
             <div class="form-group">
               <label>Tampilkan: </label>

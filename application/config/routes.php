@@ -57,8 +57,35 @@ $route['barang/form'] = 'admin/form_barangmasuk2';
 $route['barang/insert'] = 'admin/insert';
 $route['admin'] = 'admin/index';
 $route['aset'] = 'admin/index_aset';
+// aset all masuk keluar routes
 $route['aset/masuk'] = 'admin/masuk';
 $route['aset/keluar'] = 'admin/keluar';
+// firewall routes
+$route['aset/masuk_firewall'] = 'admin/list_masuk_firewall';
+$route['aset/keluar_firewall'] = 'admin/list_keluar_firewall';
+// monitor routes
+$route['aset/masuk_monitor'] = 'admin/list_masuk_monitor';
+$route['aset/keluar_monitor'] = 'admin/list_keluar_monitor';
+// laptop routes
+$route['aset/masuk_laptop'] = 'admin/list_masuk_laptop';
+$route['aset/keluar_laptop'] = 'admin/list_keluar_laptop';
+// harddisk routes
+$route['aset/masuk_harddisk'] = 'admin/list_masuk_harddisk';
+$route['aset/keluar_harddisk'] = 'admin/list_keluar_harddisk';
+// printer routes
+$route['aset/masuk_printer'] = 'admin/list_masuk_printer';
+$route['aset/keluar_printer'] = 'admin/list_keluar_printer';
+// rack server routes
+$route['aset/masuk_rack_server'] = 'admin/list_masuk_rack_server';
+$route['aset/keluar_rack_server'] = 'admin/list_keluar_rack_server';
+// server routes
+$route['aset/masuk_server'] = 'admin/list_masuk_server';
+$route['aset/keluar_server'] = 'admin/list_keluar_server';
+// pc routes
+$route['aset/masuk_pc'] = 'admin/list_masuk_pc';
+$route['aset/keluar_pc'] = 'admin/list_keluar_pc';
+
+
 $route['aset/keluar/(:any)'] = 'admin/keluar/$1';
 $route['aset/list_masuk'] = 'admin/list_masuk';
 $route['aset/list_keluar'] = 'admin/list_keluar';

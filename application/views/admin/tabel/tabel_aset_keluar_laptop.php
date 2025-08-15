@@ -2,7 +2,7 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Tabel Barang Masuk
+      Tabel Barang Keluar Laptop
     </h1>
     <ol class="breadcrumb">
       <li><a href="<?= base_url('admin') ?>"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -34,7 +34,7 @@
           <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>
         </div>
         <div class="col-md-6">
-          <form method="get" action="<?php echo site_url('aset/list_keluar'); ?>" class="form-inline pull-right">
+          <form method="get" action="<?php echo site_url('aset/keluar_laptop'); ?>" class="form-inline pull-right">
             <div class="form-group">
               <input type="text" name="search" class="form-control" placeholder="Cari..." value="<?php echo $search; ?>">
             </div>
@@ -45,7 +45,7 @@
 
       <div class="row mt-3">
         <div class="col-md-12">
-          <form method="get" action="<?php echo site_url('aset/list_keluar'); ?>" class="form-inline">
+          <form method="get" action="<?php echo site_url('aset/keluar_laptop'); ?>" class="form-inline">
             <input type="hidden" name="search" value="<?php echo $search; ?>">
             <div class="form-group">
               <label>Tampilkan: </label>
@@ -69,6 +69,7 @@
             <th>Tipe</th>
             <th>Nama Penerima</th>
             <th>Posisi Penerima</th>
+            <th>Lokasi</th>
             <th>Tanggal Keluar</th>
             <th>Aksi</th>
           </tr>
@@ -83,6 +84,7 @@
                 <td><?php echo $asset->tipe; ?></td>
                 <td><?php echo $asset->nama_penerima; ?></td>
                 <td><?php echo ucfirst($asset->posisi_penerima); ?></td>
+                <td><?php echo ucfirst($asset->lokasi); ?></td>
                 <td><?php echo date('d/m/Y', strtotime($asset->tanggal_keluar)); ?></td>
                 <td>
                   <button onclick="confirmKembalikan('<?php echo $asset->kode_aset; ?>')"
@@ -99,12 +101,15 @@
           <?php endif; ?>
         </tbody>
       </table>
-
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <?php echo $pagination; ?>
-        </div>
+      <!-- pagination -->
+      <div class="container">
+        <nav class="text-center">
+          <ul class="pagination">
+            <?php echo $pagination; ?>
+          </ul>
+        </nav>
       </div>
+      <!-- end of pagination -->
     </div>
   </section>
 

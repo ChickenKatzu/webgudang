@@ -1170,13 +1170,62 @@ class M_admin extends CI_Model
       $this->db->like('tb_aset_keluar.kode_aset', $search);
       $this->db->or_like('tb_aset_masuk.nama_barang', $search);
       $this->db->or_like('tb_aset_masuk.merk', $search);
-      $this->db->or_like('tb_aset_masuk.tipe', $search);
+      $this->db->or_like('tb_aset_masuWk.tipe', $search);
       $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
       $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
       $this->db->group_end();
     }
 
     return $this->db->get()->result();
+  }
+
+  // numrow parameter cideng all
+  public function numrows_cideng_all_keluar()
+  {
+    $this->db->from('tb_aset_masuk');
+    $this->db->join('tb_aset_keluar', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.lokasi', 'cideng');
+    return $this->db->count_all_results();
+  }
+  public function numrows_cideng_all_masuk()
+  {
+    $this->db->from('tb_aset_masuk');
+    $this->db->where('lokasi', 'cideng');
+    return $this->db->count_all_results();
+  }
+  public function number_cideng($tabel)
+  {
+    $query = $this->db->get($tabel);
+    return $query->result();
+  }
+  // numrow parameter bungur all
+  public function numrows_bungur_all_keluar()
+  {
+    $this->db->from('tb_aset_masuk');
+    $this->db->join('tb_aset_keluar', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.lokasi', 'bungur');
+    return $this->db->count_all_results();
+  }
+  public function numrows_bungur_all_masuk()
+  {
+    $this->db->from('tb_aset_masuk');
+    $this->db->where('lokasi', 'bungur');
+    return $this->db->count_all_results();
+  }
+
+  // numrow parameter Capital Place all
+  public function numrows_capital_all_keluar()
+  {
+    $this->db->from('tb_aset_masuk');
+    $this->db->join('tb_aset_keluar', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
+    $this->db->where('tb_aset_masuk.lokasi', 'cp');
+    return $this->db->count_all_results();
+  }
+  public function numrows_capital_all_masuk()
+  {
+    $this->db->from('tb_aset_masuk');
+    $this->db->where('lokasi', 'cp');
+    return $this->db->count_all_results();
   }
 }
 // end of aset masuk part 2

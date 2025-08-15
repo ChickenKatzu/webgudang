@@ -187,14 +187,11 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <!-- <li class="<?= ($segment == 'tabel_barangmasuk') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk</a></li>
-                            <li class="<?= ($segment == 'tabel_barangmasuk2') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk 2</a></li> -->
                             <li class="<?= ($segment == 'list_masuk_laptop') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk_laptop') ?>"><i class="fa fa-circle-o"></i> Laptop</a></li>
                             <li class="<?= ($segment == 'list_masuk_monitor') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk_monitor') ?>"><i class="fa fa-circle-o"></i> Monitor</a></li>
                             <li class="<?= ($segment == 'list_masuk_firewall') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk_firewall') ?>"><i class="fa fa-circle-o"></i> Firewall</a></li>
-                            <!-- <li class="<?= ($segment == 'list_keluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar') ?>"><i class="fa fa-circle-o"></i> Firewall</a></li> -->
-                            <!-- <li class="<?= ($segment == 'tabel_barangkeluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangkeluar') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Keluar</a></li>
-                            <li class="<?= ($segment == 'tabel_satuan') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_satuan') ?>"><i class="fa fa-circle-o"></i> Laporan Satuan</a></li> -->
+                            <li class="<?= ($segment == 'list_masuk_server') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk_server') ?>"><i class="fa fa-circle-o"></i> Server</a></li>
+                            <li class="<?= ($segment == 'list_masuk_pc') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_masuk_pc') ?>"><i class="fa fa-circle-o"></i> PC</a></li>
                         </ul>
                     </li>
                     <!-- Sub Laporan Aset Keluar -->
@@ -206,14 +203,11 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <!-- <li class="<?= ($segment == 'tabel_barangmasuk') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk</a></li>
-                            <li class="<?= ($segment == 'tabel_barangmasuk2') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangmasuk2') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Masuk 2</a></li> -->
                             <li class="<?= ($segment == 'list_keluar_laptop') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_laptop') ?>"><i class="fa fa-circle-o"></i> Laptop</a></li>
                             <li class="<?= ($segment == 'list_keluar_monitor') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_monitor') ?>"><i class="fa fa-circle-o"></i> Monitor</a></li>
                             <li class="<?= ($segment == 'list_keluar_firewall') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_firewall') ?>"><i class="fa fa-circle-o"></i> Firewall</a></li>
-                            <!-- <li class="<?= ($segment == 'list_keluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar') ?>"><i class="fa fa-circle-o"></i> Firewall</a></li> -->
-                            <!-- <li class="<?= ($segment == 'tabel_barangkeluar') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_barangkeluar') ?>"><i class="fa fa-circle-o"></i> Laporan Barang Keluar</a></li>
-                            <li class="<?= ($segment == 'tabel_satuan') ? 'active' : '' ?>"><a href="<?= base_url('admin/tabel_satuan') ?>"><i class="fa fa-circle-o"></i> Laporan Satuan</a></li> -->
+                            <li class="<?= ($segment == 'list_keluar_server') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_server') ?>"><i class="fa fa-circle-o"></i> Server</a></li>
+                            <li class="<?= ($segment == 'list_keluar_pc') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_pc') ?>"><i class="fa fa-circle-o"></i> PC</a></li>
                         </ul>
                     </li>
                     <li class="header">LABELS</li>

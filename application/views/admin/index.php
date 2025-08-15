@@ -20,17 +20,13 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
           <div class="inner">
-            <?php if (!empty($stokBarangMasuk)) { ?>
-              <?php foreach ($stokBarangMasuk as $d) { ?>
-                <h3><?= $d ?></h3> <!-- Langsung tampilkan angka -->
-              <?php } ?>
-            <?php } else { ?>
-              <h3>0</h3>
+            <?php if (!empty($stokBarangMasukCideng)) { ?>
+              <h3><?= $stokBarangMasukCideng ?></h3>
             <?php } ?>
             <p>Stok Barang Gudang</p>
           </div>
           <div class="icon">
-            <i class="ion ion-bag"></i>
+            <i class="fa fa-laptop"></i>
           </div>
           <a href="<?= base_url('admin/tabel_barangmasuk') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
@@ -40,22 +36,19 @@
         <!-- small box -->
         <div class="small-box bg-green">
           <div class="inner">
-            <?php if (!empty($stokBarangKeluar)) { ?>
-              <?php foreach ($stokBarangKeluar as $d) { ?>
-                <h3><?= $d ?></h3>
-              <?php } ?>
-            <?php } else { ?>
-              <h3>0</h3>
+            <?php if (!empty($stokBarangKeluarCideng)) { ?>
+              <h3><?= $stokBarangKeluarCideng ?></h3>
             <?php } ?>
             <p>Stok Barang Keluar</p>
           </div>
           <div class="icon">
-            <i class="ion ion-stats-bars"></i>
+            <i class="fa fa-share"></i>
           </div>
           <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
+
+      <!-- user and invoice dashboard start -->
       <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-yellow">
@@ -71,7 +64,6 @@
           <a href="<?= base_url('admin/users') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
       <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-red">
@@ -86,7 +78,7 @@
           <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
+      <!-- user and invoice dashboard end -->
     </div>
     <!-- /.row -->
     <!-- Main row -->
@@ -109,12 +101,8 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
           <div class="inner">
-            <?php if (!empty($stokBarangMasuk)) { ?>
-              <?php foreach ($stokBarangMasuk as $d) { ?>
-                <h3><?= $d->jumlah ?></h3>
-              <?php } ?>
-            <?php } else { ?>
-              <h3>0</h3>
+            <?php if (!empty($stokBarangMasukBungur)) { ?>
+              <h3><?= $stokBarangMasukBungur ?></h3>
             <?php } ?>
             <p>Stok Barang Gudang</p>
           </div>
@@ -129,12 +117,8 @@
         <!-- small box -->
         <div class="small-box bg-green">
           <div class="inner">
-            <?php if (!empty($stokBarangKeluar)) { ?>
-              <?php foreach ($stokBarangKeluar as $d) { ?>
-                <h3><?= $d->jumlah ?></h3>
-              <?php } ?>
-            <?php } else { ?>
-              <h3>0</h3>
+            <?php if (!empty($stockBarangKeluarBungur)) { ?>
+              <h3><?= $stockBarangKeluarBungur ?></h3>
             <?php } ?>
             <p>Stok Barang Keluar</p>
           </div>
@@ -144,7 +128,7 @@
           <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
+      <!-- user and invoice dashboard start -->
       <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-yellow">
@@ -160,7 +144,6 @@
           <a href="<?= base_url('admin/users') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
       <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-red">
@@ -175,7 +158,7 @@
           <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
+      <!-- user and invoice dashboard end -->
     </div>
     <!-- /.row -->
     <!-- Main row -->
@@ -196,12 +179,8 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
           <div class="inner">
-            <?php if (!empty($stokBarangMasuk)) { ?>
-              <?php foreach ($stokBarangMasuk as $d) { ?>
-                <h3><?= $d->jumlah ?></h3>
-              <?php } ?>
-            <?php } else { ?>
-              <h3>0</h3>
+            <?php if (!empty($stockBarangMasukCapitalPlace)) { ?>
+              <h3><?= $stockBarangMasukCapitalPlace ?></h3>
             <?php } ?>
             <p>Stok Barang Gudang</p>
           </div>
@@ -216,12 +195,8 @@
         <!-- small box -->
         <div class="small-box bg-green">
           <div class="inner">
-            <?php if (!empty($stokBarangKeluar)) { ?>
-              <?php foreach ($stokBarangKeluar as $d) { ?>
-                <h3><?= $d->jumlah ?></h3>
-              <?php } ?>
-            <?php } else { ?>
-              <h3>0</h3>
+            <?php if (!empty($stockBarangKeluarCapitalPlace)) { ?>
+              <h3><?= $stockBarangKeluarCapitalPlace ?></h3>
             <?php } ?>
             <p>Stok Barang Keluar</p>
           </div>
@@ -231,7 +206,7 @@
           <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
+      <!-- user and invoice dashboard start -->
       <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-yellow">
@@ -247,7 +222,6 @@
           <a href="<?= base_url('admin/users') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
       <div class="col-lg-3 col-xs-6">
         <!-- small box -->
         <div class="small-box bg-red">
@@ -262,7 +236,7 @@
           <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
-      <!-- ./col -->
+      <!-- user and invoice dashboard end -->
     </div>
     <!-- /.row -->
     <!-- Main row -->

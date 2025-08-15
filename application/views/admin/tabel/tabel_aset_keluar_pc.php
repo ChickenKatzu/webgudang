@@ -2,7 +2,7 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Tabel Barang Masuk Firewall
+      Tabel Barang Keluar PC
     </h1>
     <ol class="breadcrumb">
       <li><a href="<?= base_url('admin') ?>"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -22,13 +22,19 @@
         </div>
       <?php endif; ?>
 
+      <?php if ($this->session->flashdata('error')): ?>
+        <div class="alert alert-danger">
+          <?php echo $this->session->flashdata('error'); ?>
+        </div>
+      <?php endif; ?>
+
       <div class="row">
         <div class="col-md-6">
-          <a href="<?php echo site_url('aset/masuk'); ?>" class="btn btn-primary">Tambah Aset Masuk</a>
+          <a href="<?php echo site_url('aset/list_masuk'); ?>" class="btn btn-warning">Tambah Aset Keluar</a>
           <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>
         </div>
         <div class="col-md-6">
-          <form method="get" action="<?php echo site_url('aset/masuk_firewall'); ?>" class="form-inline pull-right">
+          <form method="get" action="<?php echo site_url('aset/keluar_pc'); ?>" class="form-inline pull-right">
             <div class="form-group">
               <input type="text" name="search" class="form-control" placeholder="Cari..." value="<?php echo $search; ?>">
             </div>
@@ -39,7 +45,7 @@
 
       <div class="row mt-3">
         <div class="col-md-12">
-          <form method="get" action="<?php echo site_url('aset/masuk_firewall'); ?>" class="form-inline">
+          <form method="get" action="<?php echo site_url('aset/keluar_pc'); ?>" class="form-inline">
             <input type="hidden" name="search" value="<?php echo $search; ?>">
             <div class="form-group">
               <label>Tampilkan: </label>
@@ -61,12 +67,13 @@
             <th>Kode Aset</th>
             <th>Nama Barang</th>
             <th>Tipe</th>
-            <th>Merk</th>
-            <th>Lokasi</th>
-            <th>Tanggal Masuk</th>
+            <th>Nama Penerima</th>
+            <th>Posisi Penerima</th>
+            <th>Tanggal Keluar</th>
             <th>Aksi</th>
           </tr>
         </thead>
+
         <tbody>
           <?php if (count($assets) > 0): ?>
             <?php foreach ($assets as $asset): ?>
@@ -74,21 +81,20 @@
                 <td><?php echo $asset->kode_aset; ?></td>
                 <td><?php echo $asset->nama_barang; ?></td>
                 <td><?php echo $asset->tipe; ?></td>
-                <td><?php echo $asset->merk; ?></td>
-                <td><?php echo $asset->lokasi; ?></td>
-                <td><?php echo date('d/m/Y', strtotime($asset->tanggal_masuk)); ?></td>
+                <td><?php echo $asset->nama_penerima; ?></td>
+                <td><?php echo ucfirst($asset->posisi_penerima); ?></td>
+                <td><?php echo date('d/m/Y', strtotime($asset->tanggal_keluar)); ?></td>
                 <td>
-                  <?php if (!$this->M_admin->is_aset_keluar($asset->kode_aset)): ?>
-                    <a href="<?php echo site_url('aset/keluar/' . $asset->kode_aset); ?>" class="btn btn-warning btn-sm">Keluar</a>
-                  <?php else: ?>
-                    <span class="label label-success">Sudah Keluar</span>
-                  <?php endif; ?>
+                  <button onclick="confirmKembalikan('<?php echo $asset->kode_aset; ?>')"
+                    class="btn btn-info btn-sm">
+                    Kembalikan
+                  </button>
                 </td>
               </tr>
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="7" class="text-center">Tidak ada data ditemukan</td>
+              <td colspan="7" class="text-center">Tidak ada data aset keluar</td>
             </tr>
           <?php endif; ?>
         </tbody>
@@ -110,6 +116,12 @@
     function confirmDelete(id) {
       if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
         window.location.href = '<?= base_url("barang/delete/") ?>' + id;
+      }
+    }
+
+    function confirmKembalikan(kode_aset) {
+      if (confirm('Apakah Anda yakin ingin mengembalikan aset ini?')) {
+        window.location.href = '<?php echo site_url("aset/kembalikan/"); ?>' + kode_aset;
       }
     }
   </script>
