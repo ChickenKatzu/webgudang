@@ -2,7 +2,7 @@
   <!-- Content Header (Page header) -->
   <section class="content-header">
     <h1>
-      Tabel Barang Masuk
+      Tabel List Gudang
     </h1>
     <ol class="breadcrumb">
       <li><a href="<?= base_url('admin') ?>"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -27,7 +27,7 @@
 
       <div class="row">
         <div class="col-md-6">
-          <a href="<?php echo site_url('aset/masuk'); ?>" class="btn btn-primary">Tambah Aset Masuk</a>
+          <a href="<?php echo site_url('aset/tambah_gudang'); ?>" class="btn btn-primary">Tambah Gudang</a>
           <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>
         </div>
         <div class="col-md-6">
@@ -42,7 +42,7 @@
 
       <div class="row mt-3">
         <div class="col-md-12">
-          <form method="get" action="<?php echo site_url('aset/list_masuk'); ?>" class="form-inline">
+          <form method="get" action="<?php echo site_url('aset/tambah_gudang'); ?>" class="form-inline">
             <input type="hidden" name="search" value="<?php echo $search; ?>">
             <div class="form-group">
               <label>Tampilkan: </label>
@@ -62,30 +62,30 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Kode Aset</th>
-            <th>Nama Barang</th>
-            <th>Tipe</th>
-            <th>Merk</th>
-            <th>Lokasi</th>
-            <th>Tanggal Masuk</th>
+            <th>Kode Gudang</th>
+            <th>Nama Gudang</th>
+            <th>Alamat Gudang</th>
+            <th>Kota</th>
+            <th>Status</th>
+            <th>Tanggal Dibuat</th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
-          <?php if (count($assets) > 0): ?>
+          <?php if (count($gudangs) > 0): ?>
             <?php $no = 1; ?>
-            <?php foreach ($assets as $asset): ?>
+            <?php foreach ($gudangs as $gudang): ?>
               <tr>
                 <td><?php echo $no ?></td>
-                <td><?php echo $asset->kode_aset; ?></td>
-                <td><?php echo $asset->nama_barang; ?></td>
-                <td><?php echo $asset->tipe; ?></td>
-                <td><?php echo $asset->merk; ?></td>
-                <td><?php echo $asset->lokasi; ?></td>
-                <td><?php echo date('d/m/Y', strtotime($asset->tanggal_masuk)); ?></td>
+                <td><?php echo $gudang->kode_gudang; ?></td>
+                <td><?php echo $gudang->nama_gudang; ?></td>
+                <td><?php echo $gudang->alamat_gudang; ?></td>
+                <td><?php echo $gudang->kota; ?></td>
+                <td><?php echo $gudang->status; ?></td>
+                <td><?php echo date('d/m/Y', strtotime($gudang->created_at)); ?></td>
                 <td>
-                  <?php if (!$this->M_admin->is_aset_keluar($asset->kode_aset)): ?>
-                    <a href="<?php echo site_url('aset/keluar/' . $asset->kode_aset); ?>" class="btn btn-warning btn-sm">Keluar</a>
+                  <?php if (!$this->M_admin->is_aset_keluar($gudang->id_gudang)): ?>
+                    <a href="<?php echo site_url('aset/keluar/' . $gudang->id_gudang); ?>" class="btn btn-warning btn-sm">Edit</a>
                   <?php else: ?>
                     <span class="label label-success">Sudah Keluar</span>
                   <?php endif; ?>
@@ -95,7 +95,7 @@
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="7" class="text-center">Tidak ada data ditemukan</td>
+              <td colspan="8" class="text-center">Tidak ada data ditemukan</td>
             </tr>
           <?php endif; ?>
         </tbody>

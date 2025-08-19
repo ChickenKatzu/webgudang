@@ -1,10 +1,10 @@
 </div>
 <!-- /.content-wrapper -->
 <footer class="main-footer">
-    <div class="pull-right hidden-xs">
-        <b>Version</b> 2.4.0
-    </div>
-    <strong>Adapundi Reserved &copy; <?= date('Y') ?></strong>
+  <div class="pull-right hidden-xs">
+    <b>Version</b> 2.4.0
+  </div>
+  <strong>Adapundi Reserved &copy; <?= date('Y') ?></strong>
 </footer>
 <!-- /.control-sidebar -->
 <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
@@ -16,7 +16,7 @@
 <script src="<?php echo base_url() ?>assets/web_admin/bower_components/jquery-ui/jquery-ui.min.js"></script>
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
-    $.widget.bridge('uibutton', $.ui.button);
+  $.widget.bridge('uibutton', $.ui.button);
 </script>
 <!-- Bootstrap 3.3.7 -->
 <script src="<?php echo base_url() ?>assets/web_admin/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -144,111 +144,134 @@
     });
   </script> -->
 
-<script>
-    $(document).ready(function() {
-        $('#kategori, #lokasi').change(function() {
-            var kategori = $('#kategori').val();
-            var lokasi = $('#lokasi').val();
 
-            if (kategori !== "" && lokasi !== "") {
-                $.ajax({
-                    url: "<?= base_url('admin/get_id_transaksi') ?>",
-                    type: "POST",
-                    data: {
-                        kategori: kategori,
-                        lokasi: lokasi
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        $('#id_transaksi').val(response.id_transaksi);
-                    }
-                });
-            }
-        });
-    });
-</script>
+<!-- on click close -->
 <script>
-    $(document).ready(function() {
-        $('#kategori, #lokasi').change(function() {
-            var kategori = $('#kategori').val();
-            var lokasi = $('#lokasi').val();
+  $(document).ready(function() {
+    // Cek localStorage, jika sudah di-close sebelumnya, jangan tampilkan
+    if (localStorage.getItem('alert-success-dismissed')) {
+      $('#success-alert').remove(); // Hapus alert jika sudah pernah di-close
+    }
 
-            if (kategori !== "" && lokasi !== "") {
-                $.ajax({
-                    url: "<?= base_url('admin/get_id_transaksi') ?>",
-                    type: "POST",
-                    data: {
-                        kategori: kategori,
-                        lokasi: lokasi
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        $('#id_transaksi').val(response.id_transaksi);
-                    }
-                });
-            }
-        });
+    // Saat tombol close diklik, simpan status di localStorage
+    $('[data-dismiss="alert"]').on('click', function() {
+      localStorage.setItem('alert-success-dismissed', 'true');
     });
+
+    // Optional: Reset status localStorage saat berpindah halaman
+    $(window).on('beforeunload', function() {
+      localStorage.removeItem('alert-success-dismissed');
+    });
+  });
 </script>
 
 <script>
-    $(document).ready(function() {
-        $('#status').on('change', function() {
-            var status = $(this).val();
+  $(document).ready(function() {
+    $('#kategori, #lokasi').change(function() {
+      var kategori = $('#kategori').val();
+      var lokasi = $('#lokasi').val();
 
-            if (status === 'new') {
-                $('#user').prop('readonly', true).css('background-color', '#e9ecef'); // Bootstrap style readonly
-            } else if (status === 'resign') {
-                $('#user').prop('readonly', false).css('background-color', '#ffffff');
-            } else {
-                $('#user').prop('readonly', true).css('background-color', '#e9ecef'); // default: readonly
-            }
+      if (kategori !== "" && lokasi !== "") {
+        $.ajax({
+          url: "<?= base_url('admin/get_id_transaksi') ?>",
+          type: "POST",
+          data: {
+            kategori: kategori,
+            lokasi: lokasi
+          },
+          dataType: "json",
+          success: function(response) {
+            $('#id_transaksi').val(response.id_transaksi);
+          }
         });
-
-        // Trigger on page load (kalau status sudah terisi)
-        $('#status').trigger('change');
+      }
     });
+  });
+</script>
+
+
+<script>
+  $(document).ready(function() {
+    $('#kategori, #lokasi').change(function() {
+      var kategori = $('#kategori').val();
+      var lokasi = $('#lokasi').val();
+
+      if (kategori !== "" && lokasi !== "") {
+        $.ajax({
+          url: "<?= base_url('admin/get_id_transaksi') ?>",
+          type: "POST",
+          data: {
+            kategori: kategori,
+            lokasi: lokasi
+          },
+          dataType: "json",
+          success: function(response) {
+            $('#id_transaksi').val(response.id_transaksi);
+          }
+        });
+      }
+    });
+  });
 </script>
 
 <script>
-    jQuery(document).ready(function($) {
-        $('.btn-delete').on('click', function() {
-            var getLink = $(this).attr('href');
-            swal({
-                title: 'Delete Data',
-                text: 'Yakin Ingin Menghapus Data ?',
-                html: true,
-                confirmButtonColor: '#d9534f',
-                showCancelButton: true,
-            }, function() {
-                window.location.href = getLink
-            });
-            return false;
-        });
+  $(document).ready(function() {
+    $('#status').on('change', function() {
+      var status = $(this).val();
+
+      if (status === 'new') {
+        $('#user').prop('readonly', true).css('background-color', '#e9ecef'); // Bootstrap style readonly
+      } else if (status === 'resign') {
+        $('#user').prop('readonly', false).css('background-color', '#ffffff');
+      } else {
+        $('#user').prop('readonly', true).css('background-color', '#e9ecef'); // default: readonly
+      }
     });
 
-    $(function() {
-        $('#example1').DataTable();
-        $('#example2').DataTable({
-            'paging': true,
-            'lengthChange': false,
-            'searching': false,
-            'ordering': true,
-            'info': true,
-            'autoWidth': false
-        })
+    // Trigger on page load (kalau status sudah terisi)
+    $('#status').trigger('change');
+  });
+</script>
+
+<script>
+  jQuery(document).ready(function($) {
+    $('.btn-delete').on('click', function() {
+      var getLink = $(this).attr('href');
+      swal({
+        title: 'Delete Data',
+        text: 'Yakin Ingin Menghapus Data ?',
+        html: true,
+        confirmButtonColor: '#d9534f',
+        showCancelButton: true,
+      }, function() {
+        window.location.href = getLink
+      });
+      return false;
     });
+  });
+
+  $(function() {
+    $('#example1').DataTable();
+    $('#example2').DataTable({
+      'paging': true,
+      'lengthChange': false,
+      'searching': false,
+      'ordering': true,
+      'info': true,
+      'autoWidth': false
+    })
+  });
 </script>
 
 <script type="text/javascript">
-    $(".form_datetime").datetimepicker({
-        format: 'dd/mm/yyyy',
-        autoclose: true,
-        todayBtn: true,
-        pickTime: false,
-        minView: 2,
-        maxView: 4,
-    });
+  $(".form_datetime").datetimepicker({
+    format: 'dd/mm/yyyy',
+    autoclose: true,
+    todayBtn: true,
+    pickTime: false,
+    minView: 2,
+    maxView: 4,
+  });
 </script>
 </body>
 

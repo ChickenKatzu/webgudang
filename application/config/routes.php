@@ -84,7 +84,13 @@ $route['aset/keluar_server'] = 'admin/list_keluar_server';
 // pc routes
 $route['aset/masuk_pc'] = 'admin/list_masuk_pc';
 $route['aset/keluar_pc'] = 'admin/list_keluar_pc';
+// form tambah gudang
+$route['aset/tambah_gudang'] = 'admin/tambah_gudang';
+$route['aset/list_gudang'] = 'admin/list_gudang';
 
+// riwayat aset dan mutasi routes
+$route['aset/riwayat'] = 'admin/riwayat_aset';
+$route['aset/mutasi'] = 'admin/mutasi_aset';
 
 $route['aset/keluar/(:any)'] = 'admin/keluar/$1';
 $route['aset/list_masuk'] = 'admin/list_masuk';

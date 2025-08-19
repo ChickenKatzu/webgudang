@@ -210,6 +210,36 @@
                             <li class="<?= ($segment == 'list_keluar_pc') ? 'active' : '' ?>"><a href="<?= base_url('admin/list_keluar_pc') ?>"><i class="fa fa-circle-o"></i> PC</a></li>
                         </ul>
                     </li>
+
+                    <!-- Gudang -->
+                    <li class="treeview <?= in_array($segment, ['tambah_gudang']) ? 'active' : '' ?>">
+                        <a href="treeview-menu">
+                            <i class="fa fa-book"></i> <span>Gudang/Site</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="<?= ($segment == 'tambah_gudang') ? 'active' : '' ?>"><a href="<?= base_url('aset/tambah_gudang') ?>"><i class="fa fa-circle-o"></i> Form Tambah Gudang</a></li>
+                            <li class="<?= ($segment == 'list_gudang') ? 'active' : '' ?>"><a href="<?= base_url('aset/list_gudang') ?>"><i class="fa fa-circle-o"></i> List Gudang</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Mutasi -->
+                    <li class="treeview <?= in_array($segment, ['mutasi_aset', 'history_aset']) ? 'active' : '' ?>">
+                        <a href="treeview-menu">
+                            <i class="fa fa-book"></i> <span>Translokasi Aset</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="<?= ($segment == 'mutasi_aset') ? 'active' : '' ?>"><a href="<?= base_url('aset/mutasi_aset') ?>"><i class="fa fa-circle-o"></i> Laporan Mutasi Aset</a></li>
+                            <li class="<?= ($segment == 'history_aset') ? 'active' : '' ?>"><a href="<?= base_url('aset/history_aset') ?>"><i class="fa fa-circle-o"></i> Laporan Riwayat Aset</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Labels -->
                     <li class="header">LABELS</li>
                     <li>
                         <a href="<?php echo base_url('admin/profile') ?>">
