@@ -22,13 +22,15 @@
           <div class="inner">
             <?php if (!empty($stokBarangMasukCideng)) { ?>
               <h3><?= $stokBarangMasukCideng ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Stok Barang Gudang</p>
           </div>
           <div class="icon">
             <i class="fa fa-laptop"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangmasuk') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_masuk') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -38,13 +40,15 @@
           <div class="inner">
             <?php if (!empty($stokBarangKeluarCideng)) { ?>
               <h3><?= $stokBarangKeluarCideng ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Stok Barang Keluar</p>
           </div>
           <div class="icon">
             <i class="fa fa-share"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_keluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
 
@@ -55,6 +59,8 @@
           <div class="inner">
             <?php if (!empty($dataUser)) { ?>
               <h3><?= $dataUser ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Users</p>
           </div>
@@ -75,7 +81,7 @@
           <div class="icon">
             <i class="ion ion-pie-graph"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_keluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- user and invoice dashboard end -->
@@ -103,13 +109,15 @@
           <div class="inner">
             <?php if (!empty($stokBarangMasukBungur)) { ?>
               <h3><?= $stokBarangMasukBungur ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Stok Barang Gudang</p>
           </div>
           <div class="icon">
             <i class="ion ion-bag"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangmasuk') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_masuk') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -119,13 +127,15 @@
           <div class="inner">
             <?php if (!empty($stockBarangKeluarBungur)) { ?>
               <h3><?= $stockBarangKeluarBungur ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Stok Barang Keluar</p>
           </div>
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_keluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- user and invoice dashboard start -->
@@ -135,6 +145,8 @@
           <div class="inner">
             <?php if (!empty($dataUser)) { ?>
               <h3><?= $dataUser ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Users</p>
           </div>
@@ -155,7 +167,7 @@
           <div class="icon">
             <i class="ion ion-pie-graph"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_keluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- user and invoice dashboard end -->
@@ -181,13 +193,15 @@
           <div class="inner">
             <?php if (!empty($stockBarangMasukCapitalPlace)) { ?>
               <h3><?= $stockBarangMasukCapitalPlace ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Stok Barang Gudang</p>
           </div>
           <div class="icon">
             <i class="ion ion-bag"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangmasuk') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_masuk') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -197,13 +211,15 @@
           <div class="inner">
             <?php if (!empty($stockBarangKeluarCapitalPlace)) { ?>
               <h3><?= $stockBarangKeluarCapitalPlace ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Stok Barang Keluar</p>
           </div>
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_keluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- user and invoice dashboard start -->
@@ -213,6 +229,8 @@
           <div class="inner">
             <?php if (!empty($dataUser)) { ?>
               <h3><?= $dataUser ?></h3>
+            <?php } else { ?>
+              <h3>0</h3>
             <?php } ?>
             <p>Users</p>
           </div>
@@ -233,7 +251,7 @@
           <div class="icon">
             <i class="ion ion-pie-graph"></i>
           </div>
-          <a href="<?= base_url('admin/tabel_barangkeluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="<?= base_url('admin/list_keluar') ?>" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- user and invoice dashboard end -->

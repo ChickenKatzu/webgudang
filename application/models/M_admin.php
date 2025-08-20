@@ -480,7 +480,7 @@ class M_admin extends CI_Model
   public function get_aset_masuk_paginated($limit, $start, $search = null)
   {
     $this->db->limit($limit, $start);
-
+    $this->db->where('status', 'tersedia');
     if ($search) {
       $this->db->group_start();
       $this->db->like('kode_aset', $search);
@@ -1212,8 +1212,6 @@ class M_admin extends CI_Model
     return $this->db->get('gudang')->result();
   }
 
-  // end of model for gudang
-
   // numrow parameter cideng all
   public function numrows_cideng_all_keluar()
   {
@@ -1253,14 +1251,48 @@ class M_admin extends CI_Model
   {
     $this->db->from('tb_aset_masuk');
     $this->db->join('tb_aset_keluar', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
-    $this->db->where('tb_aset_masuk.lokasi', 'cp');
+    $this->db->where('tb_aset_masuk.lokasi', 'capital place');
     return $this->db->count_all_results();
   }
   public function numrows_capital_all_masuk()
   {
     $this->db->from('tb_aset_masuk');
-    $this->db->where('lokasi', 'cp');
+    $this->db->where('lokasi', 'capital place');
     return $this->db->count_all_results();
+  }
+
+  // riwayat peggunaan
+
+  public function get_riwayat_by_karyawan($id_karyawan)
+  {
+    $this->db->select('r.*, a.nama_barang, a.merk, a.tipe, a.nama_karyawan');
+    $this->db->from('riwayat_penggunaan r');
+    $this->db->join('tb_aset_masuk a', 'r.kode_aset = a.kode_aset');
+    $this->db->where('r.id_karyawan', $id_karyawan);
+    $this->db->order_by('r.tanggal_penggunaan', 'DESC');
+    return $this->db->get()->result();
+  }
+
+  public function get_riwayat_by_aset($kode_aset)
+  {
+    $this->db->select('r.*, k.nama_karyawan, k.jabatan, d.nama_departemen');
+    $this->db->from('riwayat_penggunaan r');
+    $this->db->join('karyawan k', 'r.id_karyawan = k.id_karyawan');
+    $this->db->join('departement d', 'k.id_departemen = d.id_departemen', 'left');
+    $this->db->where('r.kode_aset', $kode_aset);
+    $this->db->order_by('r.tanggal_mulai', 'desc');
+    return $this->db->get()->result();
+  }
+  public function add_riwayat($data)
+  {
+    $this->db->insert('riwayat_penggunaan', $data);
+    return $this->db->insert_id();
+  }
+
+  public function update_riwayat($id_riwayat, $data)
+  {
+    $this->db->where('id_riwayat', $id_riwayat);
+    return $this->db->update('riwayat_penggunaan', $data);
   }
 }
 // end of aset masuk part 2
