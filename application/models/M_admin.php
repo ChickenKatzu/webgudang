@@ -481,6 +481,7 @@ class M_admin extends CI_Model
   {
     $this->db->limit($limit, $start);
     $this->db->where('status', 'tersedia');
+
     if ($search) {
       $this->db->group_start();
       $this->db->like('kode_aset', $search);
@@ -498,6 +499,8 @@ class M_admin extends CI_Model
   // Hitung total Aset Masuk untuk pagination
   public function count_all_aset_masuk($search = null)
   {
+    $this->db->from('tb_aset_masuk');
+    $this->db->where('status', 'tersedia');
     if ($search) {
       $this->db->group_start();
       $this->db->like('kode_aset', $search);
@@ -508,7 +511,7 @@ class M_admin extends CI_Model
       $this->db->or_like('lokasi', $search);
       $this->db->group_end();
     }
-    return $this->db->count_all_results('tb_aset_masuk');
+    return $this->db->count_all_results();
   }
 
   // Fungsi untuk Aset Keluar dengan pagination dan search

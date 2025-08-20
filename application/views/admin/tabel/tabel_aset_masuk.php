@@ -67,6 +67,7 @@
             <th>Tipe</th>
             <th>Merk</th>
             <th>Lokasi</th>
+            <th>status</th>
             <th>Tanggal Masuk</th>
             <th>Aksi</th>
           </tr>
@@ -82,6 +83,7 @@
                 <td><?php echo $asset->tipe; ?></td>
                 <td><?php echo $asset->merk; ?></td>
                 <td><?php echo $asset->lokasi; ?></td>
+                <td><?php echo $asset->status; ?></td>
                 <td><?php echo date('d/m/Y', strtotime($asset->tanggal_masuk)); ?></td>
                 <td>
                   <?php if (!$this->M_admin->is_aset_keluar($asset->kode_aset)): ?>
