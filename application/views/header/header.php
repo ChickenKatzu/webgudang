@@ -163,7 +163,7 @@
                     </li>
                     <li>
                         <!-- Sub Laporan Aset Masuk -->
-                    <li class="treeview <?= in_array($segment, ['list_masuk_laptop', 'list_masuk_firewall', 'list_masuk_monitor',  'tabel_satuan']) ? 'active' : '' ?>">
+                    <li class="treeview <?= in_array($segment, ['list_masuk_laptop', 'list_masuk_firewall', 'list_masuk_monitor',  'list_masuk_server', 'list_masuk_pc']) ? 'active' : '' ?>">
                         <a href="treeview-menu">
                             <i class="fa fa-book"></i> <span>Sub Laporan Aset masuk</span>
                             <span class="pull-right-container">
@@ -179,7 +179,7 @@
                         </ul>
                     </li>
                     <!-- Sub Laporan Aset Keluar -->
-                    <li class="treeview <?= in_array($segment, ['tabel_barangmasuk', 'list_keluar_monitor', 'list_keluar_firewall', 'list_keluar_laptop', 'tabel_barangmasuk2', 'tabel_barangkeluar', 'tabel_satuan']) ? 'active' : '' ?>">
+                    <li class="treeview <?= in_array($segment, ['list_keluar_monitor', 'list_keluar_firewall', 'list_keluar_laptop', 'list_keluar_server', 'list_keluar_pc']) ? 'active' : '' ?>">
                         <a href="treeview-menu">
                             <i class="fa fa-book"></i> <span>Sub Laporan Aset Keluar</span>
                             <span class="pull-right-container">
@@ -196,7 +196,7 @@
                     </li>
 
                     <!-- Gudang -->
-                    <li class="treeview <?= in_array($segment, ['tambah_gudang']) ? 'active' : '' ?>">
+                    <li class="treeview <?= in_array($segment, ['tambah_gudang', 'list_gudang']) ? 'active' : '' ?>">
                         <a href="treeview-menu">
                             <i class="fa fa-book"></i> <span>Gudang/Site</span>
                             <span class="pull-right-container">

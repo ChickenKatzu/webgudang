@@ -651,7 +651,7 @@ class M_admin extends CI_Model
 
   public function get_aset_keluar_laptop_paginated($limit, $start, $search = null)
   {
-    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
+    $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk,tb_aset_masuk.status');
     $this->db->from('tb_aset_keluar');
     $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset');
     $this->db->where('tb_aset_masuk.tipe', 'laptop'); // Filter hanya laptop
@@ -1298,4 +1298,3 @@ class M_admin extends CI_Model
     return $this->db->update('riwayat_penggunaan', $data);
   }
 }
-// end of aset masuk part 2

@@ -58,6 +58,7 @@
       <table class="table table-bordered table-striped mt-3">
         <thead>
           <tr>
+            <th>No</th>
             <th>Kode Aset</th>
             <th>Nama Barang</th>
             <th>Tipe</th>
@@ -69,8 +70,10 @@
         </thead>
         <tbody>
           <?php if (count($assets) > 0): ?>
+            <?php $no = 1; ?>
             <?php foreach ($assets as $asset): ?>
               <tr>
+                <td><?php echo $no ?></td>
                 <td><?php echo $asset->kode_aset; ?></td>
                 <td><?php echo $asset->nama_barang; ?></td>
                 <td><?php echo $asset->tipe; ?></td>
@@ -85,6 +88,7 @@
                   <?php endif; ?>
                 </td>
               </tr>
+              <?php $no++; ?>
             <?php endforeach; ?>
           <?php else: ?>
             <tr>

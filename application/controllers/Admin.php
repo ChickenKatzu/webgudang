@@ -866,38 +866,6 @@ class Admin extends CI_Controller
     $this->load->view('footer/footer', $data);
   }
 
-  // Form Aset Keluar
-  public function keluar($kode_aset = null)
-  {
-    if ($_POST) {
-      $this->form_validation->set_rules('kode_aset', 'Kode Aset', 'required');
-      $this->form_validation->set_rules('nama_penerima', 'Nama Penerima', 'required');
-      $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'required');
-
-      if ($this->form_validation->run()) {
-        $data = [
-          'kode_aset' => $this->input->post('kode_aset'),
-          'nama_penerima' => $this->input->post('nama_penerima'),
-          'posisi_penerima' => $this->input->post('posisi_penerima'),
-          'tanggal_keluar' => $this->input->post('tanggal_keluar')
-        ];
-
-        if ($this->M_admin->create_aset_keluar($data)) {
-          $this->session->set_flashdata('success', 'Aset berhasil dikeluarkan');
-          redirect('aset/list_keluar');
-        }
-      }
-    }
-
-    $data['title'] = 'Form Aset Keluar';
-    $data['asset'] = $kode_aset ? $this->M_admin->get_aset_masuk_by_kode($kode_aset) : null;
-    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
-
-    $this->load->view('header/header', $data);
-    $this->load->view('admin/perpindahan_barang/form_aset_keluar', $data);
-    $this->load->view('footer/footer', $data);
-  }
-
   // List Aset Masuk All
   public function list_masuk()
   {
@@ -944,7 +912,37 @@ class Admin extends CI_Controller
     $this->load->view('footer/footer', $data);
   }
 
+  // Form Aset Keluar
+  public function keluar($kode_aset = null)
+  {
+    if ($_POST) {
+      $this->form_validation->set_rules('kode_aset', 'Kode Aset', 'required');
+      $this->form_validation->set_rules('nama_penerima', 'Nama Penerima', 'required');
+      $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'required');
 
+      if ($this->form_validation->run()) {
+        $data = [
+          'kode_aset' => $this->input->post('kode_aset'),
+          'nama_penerima' => $this->input->post('nama_penerima'),
+          'posisi_penerima' => $this->input->post('posisi_penerima'),
+          'tanggal_keluar' => $this->input->post('tanggal_keluar')
+        ];
+
+        if ($this->M_admin->create_aset_keluar($data)) {
+          $this->session->set_flashdata('success', 'Aset berhasil dikeluarkan');
+          redirect('aset/list_keluar');
+        }
+      }
+    }
+
+    $data['title'] = 'Form Aset Keluar';
+    $data['asset'] = $kode_aset ? $this->M_admin->get_aset_masuk_by_kode($kode_aset) : null;
+    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+    $this->load->view('header/header', $data);
+    $this->load->view('admin/perpindahan_barang/form_aset_keluar', $data);
+    $this->load->view('footer/footer', $data);
+  }
 
   // List Aset Keluar dengan pagination dan search
   public function list_keluar()
@@ -1951,101 +1949,6 @@ class Admin extends CI_Controller
 
     $this->load->view('header/header', $data);
     $this->load->view('admin/tabel/tabel_aset_keluar_rack_server', $data);
-    $this->load->view('footer/footer', $data);
-  }
-
-  public function tambah_gudang()
-  {
-    $data['title'] = 'Form Tambah Gudang';
-    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
-
-    $this->load->view('header/header', $data);
-    $this->load->view('admin/form_gudang/form_tambah_gudang', $data);
-    $this->load->view('footer/footer', $data);
-  }
-
-  public function list_gudang()
-  {
-    $config = array();
-    $config['base_url'] = site_url('aset/list_gudang');
-    $config['total_rows'] = $this->M_admin->count_gudang($this->input->get('search'));
-    $config['per_page'] = $this->input->get('per_page') ?: 10;
-    $config['page_query_string'] = TRUE;
-    $config['query_string_segment'] = 'page';
-    $config['reuse_query_string'] = TRUE;
-
-    $config['full_tag_open'] = '<ul class="pagination">';
-    $config['full_tag_close'] = '</ul>';
-    $config['first_tag_open'] = '<li>';
-    $config['first_tag_close'] = '</li>';
-    $config['last_tag_open'] = '<li>';
-    $config['last_tag_close'] = '</li>';
-    $config['next_tag_open'] = '<li>';
-    $config['next_tag_close'] = '</li>';
-    $config['prev_tag_open'] = '<li>';
-    $config['prev_tag_close'] = '</li>';
-    $config['cur_tag_open'] = '<li class="active"><a href="#">';
-    $config['cur_tag_close'] = '</a></li>';
-    $config['num_tag_open'] = '<li>';
-    $config['num_tag_close'] = '</li>';
-
-    $this->pagination->initialize($config);
-
-    $page = $this->input->get('page') ?: 0;
-    $per_page = $this->input->get('per_page') ?: 10;
-    $search = $this->input->get('search');
-
-    $data['title'] = 'Daftar Gudang';
-    $data['gudangs'] = $this->M_admin->get_gudang_paginated($per_page, $page, $search);
-    $data['pagination'] = $this->pagination->create_links();
-    $data['per_page'] = $per_page;
-    $data['search'] = $search;
-    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
-
-    $this->load->view('header/header', $data);
-    $this->load->view('admin/tabel/tabel_list_gudang', $data);
-    $this->load->view('footer/footer', $data);
-  }
-
-  // mutasi aset
-  public function mutasi_aset()
-  {
-    $config = array();
-    $config['base_url'] = site_url('aset/mutasi_aset');
-    $config['total_rows'] = $this->M_admin->count_mutasi($this->input->get('search'));
-    $config['per_page'] = $this->input->get('per_page') ?: 10;
-    $config['page_query_string'] = TRUE;
-    $config['query_string_segment'] = 'page';
-    $config['reuse_query_string'] = TRUE;
-
-    $config['full_tag_open'] = '<ul class="pagination">';
-    $config['full_tag_close'] = '</ul>';
-    $config['first_tag_open'] = '<li>';
-    $config['first_tag_close'] = '</li>';
-    $config['last_tag_open'] = '<li>';
-    $config['last_tag_close'] = '</li>';
-    $config['next_tag_open'] = '<li>';
-    $config['next_tag_close'] = '</li>';
-    $config['prev_tag_open'] = '<li>';
-    $config['prev_tag_close'] = '</li>';
-    $config['cur_tag_open'] = '<li class="active"><a href="#">';
-    $config['cur_tag_close'] = '</a></li>';
-    $config['num_tag_open'] = '<li>';
-    $config['num_tag_close'] = '</li>';
-
-    $this->pagination->initialize($config);
-
-    $page = $this->input->get('page') ?: 0;
-    $per_page = $this->input->get('per_page') ?: 10;
-    $search = $this->input->get('search');
-    $data['title'] = 'Mutasi Aset';
-    $data['mutasi'] = $this->M_admin->get_mutasi_aset_paginated($per_page, $page, $search);
-    $data['pagination'] = $this->pagination->create_links();
-    $data['per_page'] = $per_page;
-    $data['search'] = $search;
-    $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
-    $this->load->view('header/header', $data);
-    $this->load->view('admin/tabel/tabel_mutasi_aset', $data);
     $this->load->view('footer/footer', $data);
   }
 }

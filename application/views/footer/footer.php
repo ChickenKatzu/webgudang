@@ -262,7 +262,7 @@
     })
   });
 </script>
-
+<!-- datepicker -->
 <script type="text/javascript">
   $(".form_datetime").datetimepicker({
     format: 'dd/mm/yyyy',
@@ -272,6 +272,56 @@
     minView: 2,
     maxView: 4,
   });
+</script>
+
+<!-- gudang -->
+<!-- <script>
+  function generateKodeGudang() {
+    var nama = document.getElementById('nama_gudang').value;
+    var lokasi = document.getElementById('lokasi_gudang').value;
+
+    if (nama && lokasi) {
+      // Kirim permintaan AJAX untuk generate kode
+      $.ajax({
+        url: '<?php echo site_url("aset/generate_kode_ajax"); ?>',
+        type: 'POST',
+        data: {
+          nama_gudang: nama,
+          lokasi_gudang: lokasi
+        },
+        success: function(response) {
+          var result = JSON.parse(response);
+          if (result.success) {
+            document.getElementById('kode_gudang_display').value = result.kode;
+            document.getElementById('kode_gudang').value = result.kode;
+          }
+        }
+      });
+    }
+  }
+</script> -->
+<script>
+  function generateKodeGudang() {
+    var lokasi = document.getElementById('lokasi_gudang').value;
+
+    if (lokasi) {
+      // Kirim permintaan AJAX untuk generate kode
+      $.ajax({
+        url: '<?php echo site_url("aset/generate_kode_ajax"); ?>',
+        type: 'POST',
+        data: {
+          lokasi_gudang: lokasi
+        },
+        success: function(response) {
+          var result = JSON.parse(response);
+          if (result.success) {
+            document.getElementById('kode_gudang_display').value = result.kode;
+            document.getElementById('kode_gudang').value = result.kode;
+          }
+        }
+      });
+    }
+  }
 </script>
 </body>
 

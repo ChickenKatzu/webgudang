@@ -64,12 +64,14 @@
       <table class="table table-bordered table-striped mt-3">
         <thead>
           <tr>
+            <th>No</th>
             <th>Kode Aset</th>
             <th>Nama Barang</th>
             <th>Tipe</th>
             <th>Nama Penerima</th>
             <th>Posisi Penerima</th>
             <th>Lokasi</th>
+            <th>status</th>
             <th>Tanggal Keluar</th>
             <th>Aksi</th>
           </tr>
@@ -77,14 +79,17 @@
 
         <tbody>
           <?php if (count($assets) > 0): ?>
+            <?php $no = 1; ?>
             <?php foreach ($assets as $asset): ?>
               <tr>
+                <td><?php echo $no ?></td>
                 <td><?php echo $asset->kode_aset; ?></td>
                 <td><?php echo $asset->nama_barang; ?></td>
                 <td><?php echo $asset->tipe; ?></td>
                 <td><?php echo $asset->nama_penerima; ?></td>
                 <td><?php echo ucfirst($asset->posisi_penerima); ?></td>
                 <td><?php echo ucfirst($asset->lokasi); ?></td>
+                <td><?php echo $asset->status; ?></td>
                 <td><?php echo date('d/m/Y', strtotime($asset->tanggal_keluar)); ?></td>
                 <td>
                   <button onclick="confirmKembalikan('<?php echo $asset->kode_aset; ?>')"
@@ -93,10 +98,11 @@
                   </button>
                 </td>
               </tr>
+              <?php $no++; ?>
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="7" class="text-center">Tidak ada data aset keluar</td>
+              <td colspan="9" class="text-center">Tidak ada data aset keluar</td>
             </tr>
           <?php endif; ?>
         </tbody>
