@@ -50,7 +50,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 $route['default_controller'] = 'login';
-$route['404_override'] = '';
+$route['404_override'] = 'noftound';
 $route['translate_uri_dashes'] = FALSE;
 $route['barang'] = 'admin/tabel_barangmasuk2';
 $route['barang/form'] = 'admin/form_barangmasuk2';
@@ -85,12 +85,16 @@ $route['aset/keluar_server'] = 'admin/list_keluar_server';
 $route['aset/masuk_pc'] = 'admin/list_masuk_pc';
 $route['aset/keluar_pc'] = 'admin/list_keluar_pc';
 // form tambah gudang
-$route['aset/tambah_gudang'] = 'admin/tambah_gudang';
-$route['aset/list_gudang'] = 'admin/list_gudang';
+$route['aset/tambah_gudang'] = 'gudang/tambah_gudang';
+$route['aset/list_gudang'] = 'gudang/list_gudang';
 
 // riwayat aset dan mutasi routes
-$route['aset/riwayat'] = 'admin/riwayat_aset';
-$route['aset/mutasi'] = 'admin/mutasi_aset';
+$route['aset/riwayat'] = 'gudang/riwayat_aset';
+$route['aset/mutasi'] = 'gudang/mutasi_aset';
+
+// form tambah aksesoris routes
+$route['aset/tambah_aksesoris'] = 'aksesoris/tambah_aksesoris';
+$route['aset/list_aksesoris'] = 'aksesoris/list_aksesoris';
 
 $route['aset/keluar/(:any)'] = 'admin/keluar/$1';
 $route['aset/list_masuk'] = 'admin/list_masuk';

@@ -877,7 +877,6 @@ class Admin extends CI_Controller
     $config['query_string_segment'] = 'page';
     $config['reuse_query_string'] = TRUE;
 
-
     $config['full_tag_open'] = '<ul class="pagination">';
     $config['full_tag_close'] = '</ul>';
     $config['first_tag_open'] = '<li>';
@@ -899,36 +898,57 @@ class Admin extends CI_Controller
     $per_page = $this->input->get('per_page') ?: 10;
     $search = $this->input->get('search');
 
+    // Parameter sorting
+    $sort_by = $this->input->get('sort_by') ?: 'tanggal_masuk';
+    $sort_order = $this->input->get('sort_order') ?: 'desc';
+
     $data['title'] = 'Daftar Aset Masuk';
-    $data['assets'] = $this->M_admin->get_aset_masuk_paginated($per_page, $page, $search);
+    $data['assets'] = $this->M_admin->get_aset_masuk_paginated($per_page, $page, $search, $sort_by, $sort_order);
     $data['pagination'] = $this->pagination->create_links();
     $data['per_page'] = $per_page;
     $data['search'] = $search;
+    $data['sort_by'] = $sort_by;
+    $data['sort_order'] = $sort_order;
+    $data['page'] = $page;
     $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
-
 
     $this->load->view('header/header', $data);
     $this->load->view('admin/tabel/tabel_aset_masuk', $data);
     $this->load->view('footer/footer', $data);
   }
-
   // Form Aset Keluar
   public function keluar($kode_aset = null)
   {
     if ($_POST) {
       $this->form_validation->set_rules('kode_aset', 'Kode Aset', 'required');
-      $this->form_validation->set_rules('nama_penerima', 'Nama Penerima', 'required');
+      $this->form_validation->set_rules('id_karyawan', 'Nama Penerima', 'required');
       $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'required');
 
       if ($this->form_validation->run()) {
+        // ambil data karyawan untuk simpan nama & jabatan
+        $karyawan = $this->M_admin->get_karyawan_by_id($this->input->post('id_karyawan'));
+
         $data = [
-          'kode_aset' => $this->input->post('kode_aset'),
-          'nama_penerima' => $this->input->post('nama_penerima'),
-          'posisi_penerima' => $this->input->post('posisi_penerima'),
-          'tanggal_keluar' => $this->input->post('tanggal_keluar')
+          'kode_aset'       => $this->input->post('kode_aset'),
+          'id_karyawan'     => $karyawan->id_karyawan,
+          'id_departemen'   => null, // kalau ada tabel departemen bisa diisi
+          'nama_penerima'   => $karyawan->nama_karyawan,
+          'posisi_penerima' => $karyawan->jabatan,
+          'tanggal_keluar'  => $this->input->post('tanggal_keluar')
         ];
 
+        // insert ke aset keluar
         if ($this->M_admin->create_aset_keluar($data)) {
+          // update status aset jadi dipinjam
+          $this->M_admin->update_status_aset($this->input->post('kode_aset'), 'dipinjam');
+
+          // simpan aksesoris kalau ada
+          if ($this->input->post('aksesoris')) {
+            foreach ($this->input->post('aksesoris') as $id_aksesoris) {
+              $this->M_admin->pinjam_aksesoris($this->input->post('kode_aset'), $id_aksesoris);
+            }
+          }
+
           $this->session->set_flashdata('success', 'Aset berhasil dikeluarkan');
           redirect('aset/list_keluar');
         }
@@ -937,12 +957,16 @@ class Admin extends CI_Controller
 
     $data['title'] = 'Form Aset Keluar';
     $data['asset'] = $kode_aset ? $this->M_admin->get_aset_masuk_by_kode($kode_aset) : null;
+    $data['karyawan'] = $this->M_admin->get_all_karyawan_aktif(); // untuk dropdown
+    $data['aksesoris'] = $this->M_admin->get_all_aksesoris(); // untuk checkbox aksesoris
     $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
 
     $this->load->view('header/header', $data);
     $this->load->view('admin/perpindahan_barang/form_aset_keluar', $data);
     $this->load->view('footer/footer', $data);
   }
+
+
 
   // List Aset Keluar dengan pagination dan search
   public function list_keluar()
@@ -1952,8 +1976,6 @@ class Admin extends CI_Controller
     $this->load->view('footer/footer', $data);
   }
 }
-
-
 #############################################
 // END OF PT INFO TEKNO SIAGA REQUEST NEEDED PART 2
 #############################################

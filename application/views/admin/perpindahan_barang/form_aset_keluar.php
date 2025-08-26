@@ -81,23 +81,37 @@
 
             <div class="form-group">
               <label>Nama Penerima</label>
-              <input type="text" name="nama_penerima" class="form-control" required>
+              <select name="id_karyawan" id="id_karyawan" class="form-control" required>
+                <option value="">Pilih Karyawan</option>
+                <?php foreach ($karyawan as $k): ?>
+                  <option value="<?php echo $k->id_karyawan; ?>" data-jabatan="<?php echo $k->jabatan; ?>">
+                    <?php echo $k->nama_karyawan; ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <input type="hidden" name="nama_penerima" id="nama_penerima">
+            </div>
+
+            <div class="form-group">
+              <label>Aksesoris (CHM)</label><br>
+              <?php foreach ($aksesoris as $a): ?>
+                <label>
+                  <input type="checkbox" name="aksesoris[]" value="<?php echo $a->id; ?>">
+                  <?php echo $a->jenis_aksesoris . ' - ' . $a->kode_aksesoris; ?>
+                </label><br>
+              <?php endforeach; ?>
             </div>
 
             <div class="form-group">
               <label>Posisi Penerima</label>
-              <select name="posisi_penerima" class="form-control" required>
-                <option value="">Pilih Posisi</option>
-                <option value="collection">Collection</option>
-                <option value="staff">Staff</option>
-                <option value="back office">Back Office</option>
-              </select>
+              <input type="text" name="posisi_penerima" id="posisi_penerima" class="form-control" readonly required>
             </div>
 
             <div class="form-group">
               <label>Tanggal Keluar</label>
               <input type="date" name="tanggal_keluar" class="form-control" required>
             </div>
+
 
             <button type="submit" class="btn btn-primary">Simpan</button>
             <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>

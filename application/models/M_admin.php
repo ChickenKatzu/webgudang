@@ -463,6 +463,40 @@ class M_admin extends CI_Model
     return $this->db->insert('tb_aset_keluar', $data);
   }
 
+  public function update_status_aset($kode_aset, $status)
+  {
+    $this->db->where('kode_aset', $kode_aset);
+    return $this->db->update('tb_aset_masuk', ['status' => $status]);
+  }
+
+  //  public function update_status_aset($kode_aset, $status)
+  // {
+  //   return $this->db->where('kode_aset', $kode_aset)
+  //     ->update('tb_aset_masuk', ['status' => $status]);
+  // }
+
+  public function get_all_karyawan_aktif()
+  {
+    return $this->db->where('status', 'aktif')->get('karyawan')->result();
+  }
+
+  public function get_karyawan_by_id($id)
+  {
+    return $this->db->where('id_karyawan', $id)->get('karyawan')->row();
+  }
+
+  public function get_all_aksesoris()
+  {
+    return $this->db->get('tb_aset_aksesoris')->result();
+  }
+
+  public function pinjam_aksesoris($kode_aset, $id_aksesoris)
+  {
+    // update tb_aset_aksesoris biar tau ikut aset mana
+    return $this->db->where('id', $id_aksesoris)
+      ->update('tb_aset_aksesoris', ['kode_aset_utama' => $kode_aset]);
+  }
+
   public function get_all_aset_keluar()
   {
     $this->db->select('tb_aset_keluar.*, tb_aset_masuk.nama_barang, tb_aset_masuk.merk, tb_aset_masuk.tipe, tb_aset_masuk.serial_number, tb_aset_masuk.lokasi, tb_aset_masuk.kondisi, tb_aset_masuk.tanggal_masuk');
@@ -477,7 +511,7 @@ class M_admin extends CI_Model
     return $this->db->get_where('tb_aset_keluar', ['kode_aset' => $kode_aset])->num_rows() > 0;
   }
   // Fungsi untuk Aset Masuk dengan pagination dan search
-  public function get_aset_masuk_paginated($limit, $start, $search = null)
+  public function get_aset_masuk_paginated($limit, $start, $search = null, $sort_by = 'tanggal_masuk', $sort_order = 'desc')
   {
     $this->db->limit($limit, $start);
     $this->db->where('status', 'tersedia');
@@ -493,14 +527,20 @@ class M_admin extends CI_Model
       $this->db->group_end();
     }
 
+    // Validasi dan sanitasi parameter sorting
+    $allowed_sort_columns = array('kode_aset', 'nama_barang', 'tipe', 'merk', 'lokasi', 'status', 'tanggal_masuk');
+    $sort_by = in_array($sort_by, $allowed_sort_columns) ? $sort_by : 'tanggal_masuk';
+    $sort_order = in_array(strtolower($sort_order), array('asc', 'desc')) ? $sort_order : 'desc';
+
+    $this->db->order_by($sort_by, $sort_order);
+
     return $this->db->get('tb_aset_masuk')->result();
   }
 
-  // Hitung total Aset Masuk untuk pagination
   public function count_all_aset_masuk($search = null)
   {
-    $this->db->from('tb_aset_masuk');
     $this->db->where('status', 'tersedia');
+
     if ($search) {
       $this->db->group_start();
       $this->db->like('kode_aset', $search);
@@ -511,9 +551,9 @@ class M_admin extends CI_Model
       $this->db->or_like('lokasi', $search);
       $this->db->group_end();
     }
-    return $this->db->count_all_results();
-  }
 
+    return $this->db->count_all_results('tb_aset_masuk');
+  }
   // Fungsi untuk Aset Keluar dengan pagination dan search
   public function get_aset_keluar_paginated($limit, $start, $search = null)
   {
@@ -577,14 +617,17 @@ class M_admin extends CI_Model
 
   public function kembalikan_aset($kode_aset)
   {
+    // Hapus data dari tb_aset_keluar
     $this->db->where('kode_aset', $kode_aset);
     $delete = $this->db->delete('tb_aset_keluar');
 
     if ($delete) {
+      // Update status jadi 'tersedia' + ubah lokasi/tanggal_masuk
       $this->db->where('kode_aset', $kode_aset);
       $update = $this->db->update('tb_aset_masuk', [
-        'tanggal_masuk' => date('Y-m-d'),
-        'lokasi' => 'gudang'
+        'status'        => 'tersedia',      // ⬅️ ubah status
+        'tanggal_masuk' => date('Y-m-d'),   // reset tanggal masuk (opsional)
+        'lokasi'        => 'gudang'         // balik ke gudang
       ]);
 
       return $update;
@@ -1180,39 +1223,6 @@ class M_admin extends CI_Model
     }
 
     return $this->db->get()->result();
-  }
-
-  // model untuk gudang
-
-  public function count_gudang($search = null)
-  {
-    $this->db->where('nama_gudang', 'gudang'); // Filter hanya gudang
-    if ($search) {
-      $this->db->group_start();
-      $this->db->like('nama_gudang', $search);
-      $this->db->or_like('kode_gudang', $search);
-      $this->db->or_like('alamat_gudang', $search);
-      $this->db->or_like('kota', $search);
-      $this->db->or_like('status', $search);
-      $this->db->group_end();
-    }
-    return $this->db->count_all_results('gudang');
-  }
-
-  public function get_gudang_paginated($limit, $start, $search = null)
-  {
-    $this->db->where('nama_gudang', 'gudang'); // Filter hanya gudang
-    if ($search) {
-      $this->db->group_start();
-      $this->db->like('nama_gudang', $search);
-      $this->db->or_like('kode_gudang', $search);
-      $this->db->or_like('alamat_gudang', $search);
-      $this->db->or_like('kota', $search);
-      $this->db->or_like('status', $search);
-      $this->db->group_end();
-    }
-    $this->db->limit($limit, $start);
-    return $this->db->get('gudang')->result();
   }
 
   // numrow parameter cideng all

@@ -62,19 +62,73 @@
         <thead>
           <tr>
             <th>No</th>
-            <th>Kode Aset</th>
-            <th>Nama Barang</th>
-            <th>Tipe</th>
-            <th>Merk</th>
-            <th>Lokasi</th>
-            <th>status</th>
-            <th>Tanggal Masuk</th>
+            <th>
+              <a href="<?php echo site_url('aset/list_masuk?' . http_build_query(array_merge($_GET, array('sort_by' => 'kode_aset', 'sort_order' => ($sort_by == 'kode_aset' && $sort_order == 'asc') ? 'desc' : 'asc')))); ?>">
+                Kode Aset
+                <?php if ($sort_by == 'kode_aset'): ?>
+                  <i class="fa fa-sort-<?php echo $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                <?php else: ?>
+                  <i class="fa fa-sort"></i>
+                <?php endif; ?>
+              </a>
+            </th>
+            <th>
+              <a href="<?php echo site_url('aset/list_masuk?' . http_build_query(array_merge($_GET, array('sort_by' => 'nama_barang', 'sort_order' => ($sort_by == 'nama_barang' && $sort_order == 'asc') ? 'desc' : 'asc')))); ?>">
+                Nama Barang
+                <?php if ($sort_by == 'nama_barang'): ?>
+                  <i class="fa fa-sort-<?php echo $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                <?php else: ?>
+                  <i class="fa fa-sort"></i>
+                <?php endif; ?>
+              </a>
+            </th>
+            <th>
+              <a href="<?php echo site_url('aset/list_masuk?' . http_build_query(array_merge($_GET, array('sort_by' => 'tipe', 'sort_order' => ($sort_by == 'tipe' && $sort_order == 'asc') ? 'desc' : 'asc')))); ?>">
+                Tipe
+                <?php if ($sort_by == 'tipe'): ?>
+                  <i class="fa fa-sort-<?php echo $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                <?php else: ?>
+                  <i class="fa fa-sort"></i>
+                <?php endif; ?>
+              </a>
+            </th>
+            <th>
+              <a href="<?php echo site_url('aset/list_masuk?' . http_build_query(array_merge($_GET, array('sort_by' => 'merk', 'sort_order' => ($sort_by == 'merk' && $sort_order == 'asc') ? 'desc' : 'asc')))); ?>">
+                Merk
+                <?php if ($sort_by == 'merk'): ?>
+                  <i class="fa fa-sort-<?php echo $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                <?php else: ?>
+                  <i class="fa fa-sort"></i>
+                <?php endif; ?>
+              </a>
+            </th>
+            <th>
+              <a href="<?php echo site_url('aset/list_masuk?' . http_build_query(array_merge($_GET, array('sort_by' => 'lokasi', 'sort_order' => ($sort_by == 'lokasi' && $sort_order == 'asc') ? 'desc' : 'asc')))); ?>">
+                Lokasi
+                <?php if ($sort_by == 'lokasi'): ?>
+                  <i class="fa fa-sort-<?php echo $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                <?php else: ?>
+                  <i class="fa fa-sort"></i>
+                <?php endif; ?>
+              </a>
+            </th>
+            <th>Status</th>
+            <th>
+              <a href="<?php echo site_url('aset/list_masuk?' . http_build_query(array_merge($_GET, array('sort_by' => 'tanggal_masuk', 'sort_order' => ($sort_by == 'tanggal_masuk' && $sort_order == 'asc') ? 'desc' : 'asc')))); ?>">
+                Tanggal Masuk
+                <?php if ($sort_by == 'tanggal_masuk'): ?>
+                  <i class="fa fa-sort-<?php echo $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                <?php else: ?>
+                  <i class="fa fa-sort"></i>
+                <?php endif; ?>
+              </a>
+            </th>
             <th>Aksi</th>
           </tr>
         </thead>
         <tbody>
           <?php if (count($assets) > 0): ?>
-            <?php $no = 1; ?>
+            <?php $no = $page + 1; ?> <!-- nomor berurutan sesuai halaman -->
             <?php foreach ($assets as $asset): ?>
               <tr>
                 <td><?php echo $no ?></td>
@@ -97,7 +151,7 @@
             <?php endforeach; ?>
           <?php else: ?>
             <tr>
-              <td colspan="7" class="text-center">Tidak ada data ditemukan</td>
+              <td colspan="9" class="text-center">Tidak ada data ditemukan</td>
             </tr>
           <?php endif; ?>
         </tbody>

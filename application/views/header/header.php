@@ -30,6 +30,26 @@
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
 
+    <!-- css for sorting list_masuk -->
+    <style>
+        .fa-sort,
+        .fa-sort-asc,
+        .fa-sort-desc {
+            margin-left: 5px;
+            font-size: 12px;
+        }
+
+        th a {
+            color: #333;
+            text-decoration: none;
+            display: block;
+        }
+
+        th a:hover {
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>

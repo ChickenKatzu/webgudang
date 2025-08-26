@@ -6,6 +6,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @property CI_Session $session
  * @property M_Gudang $M_Gudang
  * @property CI_Form_validation $form_validation
+ * @property CI_Input $input
  */
 
 class Gudang extends CI_Controller

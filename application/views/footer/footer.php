@@ -274,7 +274,33 @@
   });
 </script>
 
+<!-- script for sort -->
+<script>
+  $(document).ready(function() {
+    // Handler untuk perubahan jumlah item per halaman
+    $('#per_page').change(function() {
+      var perPage = $(this).val();
+      var url = new URL(window.location.href);
+      url.searchParams.set('per_page', perPage);
+      url.searchParams.set('page', 1); // Reset ke halaman 1
+      window.location.href = url.toString();
+    });
+  });
+</script>
 <!-- gudang -->
+
+<!-- form aset keluar -->
+<script>
+  document.getElementById('id_karyawan').addEventListener('change', function() {
+    var selected = this.options[this.selectedIndex];
+    var jabatan = selected.getAttribute('data-jabatan');
+    var nama = selected.text;
+
+    document.getElementById('posisi_penerima').value = jabatan;
+    document.getElementById('nama_penerima').value = nama;
+  });
+</script>
+
 <!-- <script>
   function generateKodeGudang() {
     var nama = document.getElementById('nama_gudang').value;

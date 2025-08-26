@@ -2,6 +2,46 @@
 
 class M_gudang extends CI_Model
 {
+    public function get_data_gambar($tabel, $username)
+    {
+        $query = $this->db->select()
+            ->from($tabel)
+            ->where('username_user', $username)
+            ->get();
+        return $query->result();
+    }
+
+    // model untuk gudang
+
+    public function count_gudang($search = null)
+    {
+        $this->db->where('nama_gudang', 'gudang'); // Filter hanya gudang
+        if ($search) {
+            $this->db->group_start();
+            $this->db->like('nama_gudang', $search);
+            $this->db->or_like('kode_gudang', $search);
+            $this->db->or_like('alamat_gudang', $search);
+            $this->db->or_like('kota', $search);
+            $this->db->or_like('status', $search);
+            $this->db->group_end();
+        }
+        return $this->db->count_all_results('gudang');
+    }
+    public function get_gudang_paginated($limit, $start, $search = null)
+    {
+        $this->db->where('nama_gudang', 'gudang'); // Filter hanya gudang
+        if ($search) {
+            $this->db->group_start();
+            $this->db->like('nama_gudang', $search);
+            $this->db->or_like('kode_gudang', $search);
+            $this->db->or_like('alamat_gudang', $search);
+            $this->db->or_like('kota', $search);
+            $this->db->or_like('status', $search);
+            $this->db->group_end();
+        }
+        $this->db->limit($limit, $start);
+        return $this->db->get('gudang')->result();
+    }
     public function get_kode_gudang($limit, $start)
     {
         $this->db->limit($limit, $start);
