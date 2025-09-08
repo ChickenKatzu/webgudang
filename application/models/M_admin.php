@@ -1307,4 +1307,21 @@ class M_admin extends CI_Model
     $this->db->where('id_riwayat', $id_riwayat);
     return $this->db->update('riwayat_penggunaan', $data);
   }
+
+  // log history
+  public function get_total_logs()
+  {
+    return $this->db->count_all('log_history');
+  }
+
+  public function get_all_logs($limit = 100, $offset = 0)
+  {
+    $this->db->select('lh.*, u.username, k.nama_karyawan');
+    $this->db->from('log_history lh');
+    $this->db->join('user u', 'lh.id_user = u.id_user', 'left');
+    $this->db->join('karyawan k', 'lh.id_karyawan = k.id_karyawan', 'left');
+    $this->db->order_by('lh.created_at', 'DESC');
+    $this->db->limit($limit, $offset);
+    return $this->db->get()->result();
+  }
 }

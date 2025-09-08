@@ -27,6 +27,21 @@ class M_gudang extends CI_Model
         }
         return $this->db->count_all_results('gudang');
     }
+
+    public function count_mutasi_gudang($search = null)
+    {
+        if ($search) {
+            $this->db->group_start();
+            $this->db->like('kode_mutasi', $search);
+            $this->db->or_like('kode_aset', $search);
+            $this->db->or_like('nama_aset', $search);
+            $this->db->or_like('asal_gudang', $search);
+            $this->db->or_like('tujuan_gudang', $search);
+            $this->db->or_like('status_mutasi', $search);
+            $this->db->group_end();
+        }
+        return $this->db->count_all_results('mutasi_gudang');
+    }
     public function get_gudang_paginated($limit, $start, $search = null)
     {
         $this->db->where('nama_gudang', 'gudang'); // Filter hanya gudang

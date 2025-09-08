@@ -28,6 +28,7 @@
       <div class="row">
         <div class="col-md-6">
           <a href="<?php echo site_url('aset/masuk'); ?>" class="btn btn-primary">Tambah Aset Masuk</a>
+          <!-- <a href="<?php echo site_url('aset/masuk'); ?>" class="btn btn-danger">Eksport</a> -->
           <a href="<?php echo site_url('aset'); ?>" class="btn btn-default">Kembali</a>
         </div>
         <div class="col-md-6">

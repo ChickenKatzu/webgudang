@@ -91,8 +91,47 @@
               </select>
               <input type="hidden" name="nama_penerima" id="nama_penerima">
             </div>
+            <!-- mouse -->
+            <!-- <div class="form-group">
+              <label>Mouse</label>
+              <select name="id_karyawan" id="id_karyawan" class="form-control" required>
+                <option value="">Pilih Mouse</option>
+                <?php foreach ($mouse as $m): ?>
+                  <option value="<?php echo $m->id; ?>" data-mouse="<?php echo $m->mouse; ?>">
+                    <?php echo $m->mouse; ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <input type="hidden" name="nama_penerima" id="nama_penerima">
+            </div> -->
+            <!-- headset -->
+            <!-- <div class="form-group">
+              <label>Headset</label>
+              <select name="id_karyawan" id="id_karyawan" class="form-control" required>
+                <option value="">Pilih Heaset</option>
+                <?php foreach ($headset as $h): ?>
+                  <option value="<?php echo $h->id; ?>" data-headset="<?php echo $h->headset; ?>">
+                    <?php echo $h->headset; ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <input type="hidden" name="nama_penerima" id="nama_penerima">
+            </div> -->
+            <!-- charger -->
+            <!-- <div class="form-group">
+              <label>Charger</label>
+              <select name="id_karyawan" id="id_karyawan" class="form-control" required>
+                <option value="">Pilih Headset</option>
+                <?php foreach ($charger as $c): ?>
+                  <option value="<?php echo $c->id; ?>" data-charger="<?php echo $c->charger; ?>">
+                    <?php echo $c->charger; ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <input type="hidden" name="nama_penerima" id="nama_penerima">
+            </div> -->
 
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label>Aksesoris (CHM)</label><br>
               <?php foreach ($aksesoris as $a): ?>
                 <label>
@@ -100,6 +139,11 @@
                   <?php echo $a->jenis_aksesoris . ' - ' . $a->kode_aksesoris; ?>
                 </label><br>
               <?php endforeach; ?>
+            </div> -->
+
+            <div class="form-group">
+              <label>Catatan</label>
+              <input type="text" class="form-control" id="catatan" name="catatan" required>
             </div>
 
             <div class="form-group">

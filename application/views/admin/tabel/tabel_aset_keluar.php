@@ -72,6 +72,7 @@
             <th>Posisi Penerima</th>
             <th>Tanggal Keluar</th>
             <th>Lokasi</th>
+            <th>Catatan</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -89,6 +90,7 @@
                 <td><?php echo ucfirst($asset->posisi_penerima); ?></td>
                 <td><?php echo date('d/m/Y', strtotime($asset->tanggal_keluar)); ?></td>
                 <td><?php echo ucfirst($asset->lokasi); ?></td>
+                <td><?php echo $asset->catatan; ?></td>
                 <td>
                   <button onclick="confirmKembalikan('<?php echo $asset->kode_aset; ?>')"
                     class="btn btn-info btn-sm">

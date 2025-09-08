@@ -52,51 +52,72 @@ defined('BASEPATH') or exit('No direct script access allowed');
 $route['default_controller'] = 'login';
 $route['404_override'] = 'noftound';
 $route['translate_uri_dashes'] = FALSE;
-$route['barang'] = 'admin/tabel_barangmasuk2';
-$route['barang/form'] = 'admin/form_barangmasuk2';
-$route['barang/insert'] = 'admin/insert';
+
+// ambigous untuk digunakan
+// $route['barang'] = 'admin/tabel_barangmasuk2';
+// $route['barang/form'] = 'admin/form_barangmasuk2';
+// $route['barang/insert'] = 'admin/insert';
+// $route['aset'] = 'admin/index_aset';
+// end of ambigous untuk digunakan
+
+// index admin
 $route['admin'] = 'admin/index';
-$route['aset'] = 'admin/index_aset';
+// form aset masuk dan keluar
+$route['aset/masuk'] = 'aset_barang/masuk';
+$route['aset/keluar'] = 'aset_barang/keluar';
 // aset all masuk keluar routes
-$route['aset/masuk'] = 'admin/masuk';
-$route['aset/keluar'] = 'admin/keluar';
+$route['aset/list_masuk'] = 'aset_barang/list_masuk';
+$route['aset/list_keluar'] = 'aset_barang/list_keluar';
 // firewall routes
-$route['aset/masuk_firewall'] = 'admin/list_masuk_firewall';
-$route['aset/keluar_firewall'] = 'admin/list_keluar_firewall';
+$route['aset/masuk_firewall'] = 'aset_barang/list_masuk_firewall';
+$route['aset/keluar_firewall'] = 'aset_barang/list_keluar_firewall';
 // monitor routes
-$route['aset/masuk_monitor'] = 'admin/list_masuk_monitor';
-$route['aset/keluar_monitor'] = 'admin/list_keluar_monitor';
+$route['aset/masuk_monitor'] = 'aset_barang/list_masuk_monitor';
+$route['aset/keluar_monitor'] = 'aset_barang/list_keluar_monitor';
 // laptop routes
-$route['aset/masuk_laptop'] = 'admin/list_masuk_laptop';
-$route['aset/keluar_laptop'] = 'admin/list_keluar_laptop';
+$route['aset/masuk_laptop'] = 'aset_barang/list_masuk_laptop';
+$route['aset/keluar_laptop'] = 'aset_barang/list_keluar_laptop';
 // harddisk routes
-$route['aset/masuk_harddisk'] = 'admin/list_masuk_harddisk';
-$route['aset/keluar_harddisk'] = 'admin/list_keluar_harddisk';
+$route['aset/masuk_harddisk'] = 'aset_barang/list_masuk_harddisk';
+$route['aset/keluar_harddisk'] = 'aset_barang/list_keluar_harddisk';
 // printer routes
-$route['aset/masuk_printer'] = 'admin/list_masuk_printer';
-$route['aset/keluar_printer'] = 'admin/list_keluar_printer';
+$route['aset/masuk_printer'] = 'aset_barang/list_masuk_printer';
+$route['aset/keluar_printer'] = 'aset_barang/list_keluar_printer';
 // rack server routes
-$route['aset/masuk_rack_server'] = 'admin/list_masuk_rack_server';
-$route['aset/keluar_rack_server'] = 'admin/list_keluar_rack_server';
+$route['aset/masuk_rack_server'] = 'aset_barang/list_masuk_rack_server';
+$route['aset/keluar_rack_server'] = 'aset_barang/list_keluar_rack_server';
 // server routes
-$route['aset/masuk_server'] = 'admin/list_masuk_server';
-$route['aset/keluar_server'] = 'admin/list_keluar_server';
+$route['aset/masuk_server'] = 'aset_barang/list_masuk_server';
+$route['aset/keluar_server'] = 'aset_barang/list_keluar_server';
 // pc routes
-$route['aset/masuk_pc'] = 'admin/list_masuk_pc';
-$route['aset/keluar_pc'] = 'admin/list_keluar_pc';
+$route['aset/masuk_pc'] = 'aset_barang/list_masuk_pc';
+$route['aset/keluar_pc'] = 'aset_barang/list_keluar_pc';
 // form tambah gudang
-$route['aset/tambah_gudang'] = 'gudang/tambah_gudang';
-$route['aset/list_gudang'] = 'gudang/list_gudang';
+$route['gudang/tambah_gudang'] = 'gudang/tambah_gudang';
+$route['gudang/list_gudang'] = 'gudang/list_gudang';
 
 // riwayat aset dan mutasi routes
 $route['aset/riwayat'] = 'gudang/riwayat_aset';
 $route['aset/mutasi'] = 'gudang/mutasi_aset';
 
 // form tambah aksesoris routes
-$route['aset/tambah_aksesoris'] = 'aksesoris/tambah_aksesoris';
-$route['aset/list_aksesoris'] = 'aksesoris/list_aksesoris';
+$route['aksesoris/get_next_numbers'] = 'aksesoris/get_next_numbers';
+$route['aksesoris/masuk_aksesoris'] = 'aksesoris/masuk';
+$route['aksesoris/list_aksesoris'] = 'aksesoris/list_aksesoris';
+$route['aksesoris/simpan'] = 'aksesoris/simpan';
+$route['aksesoris/list_aksesoris'] = 'aksesoris/list_aksesoris';
 
-$route['aset/keluar/(:any)'] = 'admin/keluar/$1';
-$route['aset/list_masuk'] = 'admin/list_masuk';
-$route['aset/list_keluar'] = 'admin/list_keluar';
-$route['aset/kembalikan/(:any)'] = 'admin/kembalikan/$1';
+// form master karyawan routes
+$route['master_user'] = 'karyawan/index';
+$route['master_user/tambah'] = 'karyawan/tambah';
+$route['master_user/edit/(:any)'] = 'karyawan/edit/$1';
+$route['master_user/simpan'] = 'karyawan/simpan';
+
+// log helpers routes
+
+
+// laporan aset routes
+$route['aset/keluar/(:any)'] = 'aset_barang/keluar/$1';
+$route['aset/list_masuk'] = 'aset_barang/list_masuk';
+$route['aset/list_keluar'] = 'aset_barang/list_keluar';
+$route['aset/kembalikan/(:any)'] = 'aset_barang/kembalikan/$1';
