@@ -554,6 +554,8 @@ class M_admin extends CI_Model
 
     return $this->db->count_all_results('tb_aset_masuk');
   }
+
+  // BIG UPDATE ASET KELUAR MODEL
   // Fungsi untuk Aset Keluar dengan pagination dan search
   public function get_aset_keluar_paginated($limit, $start, $search = null)
   {
@@ -595,17 +597,138 @@ class M_admin extends CI_Model
     return $this->db->count_all_results('tb_aset_keluar');
   }
 
-  // Kembalikan Aset
-  // public function kembalikan_aset($kode_aset, $data_kembali)
+  // Fungsi untuk Aset Keluar dengan pagination dan search + aksesoris
+  // public function get_aset_keluar_paginated($limit, $start, $search = null)
   // {
-  //   $this->db->trans_start();
-  //   $this->db->where('kode_aset', $kode_aset);
-  //   $this->db->update('tb_aset_masuk', ['status' => 'tersedia']);
-  //   $this->db->where('kode_aset', $kode_aset);
-  //   $this->db->delete('tb_aset_keluar');
-  //   $this->db->trans_complete();
-  //   return $this->db->trans_status();
+  //   $this->db->select('
+  //       tb_aset_keluar.*, 
+  //       tb_aset_masuk.nama_barang, 
+  //       tb_aset_masuk.merk, 
+  //       tb_aset_masuk.tipe, 
+  //       tb_aset_masuk.serial_number, 
+  //       tb_aset_masuk.lokasi, 
+  //       tb_aset_masuk.kondisi, 
+  //       tb_aset_masuk.tanggal_masuk,
+  //       GROUP_CONCAT(CONCAT(tb_aset_aksesoris1.jenis, " - ", tb_aset_aksesoris1.merk) SEPARATOR ", ") as aksesoris_dipinjam
+  //   ');
+  //   $this->db->from('tb_aset_keluar');
+  //   $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset', 'left');
+  //   $this->db->join('tb_aset_aksesoris1', 'tb_aset_aksesoris1.kode_aset_peminjam = tb_aset_keluar.kode_aset', 'left');
+  //   $this->db->group_by('tb_aset_keluar.id'); // Group by untuk menghindari duplikasi
+  //   $this->db->limit($limit, $start);
+
+  //   if ($search) {
+  //     $this->db->group_start();
+  //     $this->db->like('tb_aset_keluar.kode_aset', $search);
+  //     $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+  //     $this->db->or_like('tb_aset_masuk.merk', $search);
+  //     $this->db->or_like('tb_aset_masuk.tipe', $search);
+  //     $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+  //     $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+  //     $this->db->or_like('tb_aset_aksesoris1.jenis', $search);
+  //     $this->db->or_like('tb_aset_aksesoris1.merk', $search);
+  //     $this->db->group_end();
+  //   }
+
+  //   return $this->db->get()->result();
   // }
+
+  // Hitung total Aset Keluar untuk pagination
+  // public function count_all_aset_keluar($search = null)
+  // {
+  //   $this->db->from('tb_aset_keluar');
+  //   $this->db->join('tb_aset_masuk', 'tb_aset_masuk.kode_aset = tb_aset_keluar.kode_aset', 'left');
+  //   $this->db->join('tb_aset_aksesoris1', 'tb_aset_aksesoris1.kode_aset_peminjam = tb_aset_keluar.kode_aset', 'left');
+
+  //   if ($search) {
+  //     $this->db->group_start();
+  //     $this->db->like('tb_aset_keluar.kode_aset', $search);
+  //     $this->db->or_like('tb_aset_masuk.nama_barang', $search);
+  //     $this->db->or_like('tb_aset_masuk.merk', $search);
+  //     $this->db->or_like('tb_aset_masuk.tipe', $search);
+  //     $this->db->or_like('tb_aset_keluar.nama_penerima', $search);
+  //     $this->db->or_like('tb_aset_keluar.posisi_penerima', $search);
+  //     $this->db->or_like('tb_aset_aksesoris1.jenis', $search);
+  //     $this->db->or_like('tb_aset_aksesoris1.merk', $search);
+  //     $this->db->group_end();
+  //   }
+
+  //   $this->db->group_by('tb_aset_keluar.id');
+  //   return $this->db->count_all_results();
+  // }
+
+  // Fungsi untuk mendapatkan detail aksesoris yang dipinjam oleh aset tertentu
+  public function get_aksesoris_by_kode_aset($kode_aset)
+  {
+    $this->db->select('*');
+    $this->db->from('tb_aset_aksesoris1');
+    $this->db->where('kode_aset_peminjam', $kode_aset);
+    return $this->db->get()->result();
+  }
+
+  // public function kembalikan_aset($kode_aset)
+  // {
+  //   // Hapus data dari tb_aset_keluar
+  //   $this->db->where('kode_aset', $kode_aset);
+  //   $delete = $this->db->delete('tb_aset_keluar');
+
+  //   if ($delete) {
+  //     // Update status jadi 'tersedia' + ubah lokasi/tanggal_masuk
+  //     $this->db->where('kode_aset', $kode_aset);
+  //     $update = $this->db->update('tb_aset_masuk', [
+  //       'status'        => 'tersedia',      // ⬅️ ubah status
+  //       'tanggal_masuk' => date('Y-m-d'),   // reset tanggal masuk (opsional)
+  //       'lokasi'        => 'gudang'         // balik ke gudang
+  //     ]);
+
+  //     return $update;
+  //   }
+
+  //   return false;
+  // }
+  // kembalikan aset
+  public function kembalikan($kode_aset)
+  {
+    if ($this->M_admin->kembalikan_aset($kode_aset)) {
+      // Kembalikan juga aksesoris yang dipinjam
+      $this->M_admin->kembalikan_aksesoris($kode_aset);
+
+      // >>> LOG HISTORY <<<
+      log_kembali($kode_aset, 'Pengembalian aset: ' . $kode_aset);
+      // >>> END LOG <<<
+
+      $this->session->set_flashdata('success', 'Aset dan aksesoris berhasil dikembalikan');
+    } else {
+      $this->session->set_flashdata('error', 'Gagal mengembalikan aset');
+    }
+    redirect('aset/list_keluar');
+  }
+
+  // application/models/M_admin.php
+
+  public function kembalikan_aksesoris($kode_aset)
+  {
+    $data = array(
+      'status' => 'tersedia',
+      'kode_aset_peminjam' => NULL
+    );
+    $this->db->where('kode_aset_peminjam', $kode_aset);
+    return $this->db->update('tb_aset_aksesoris1', $data);
+  }
+
+  // END OF BIG UPDATE ASET KELUAR MODEL
+
+  // Kembalikan Aset
+  public function kembalikan_aset($kode_aset, $data_kembali)
+  {
+    $this->db->trans_start();
+    $this->db->where('kode_aset', $kode_aset);
+    $this->db->update('tb_aset_masuk', ['status' => 'tersedia']);
+    $this->db->where('kode_aset', $kode_aset);
+    $this->db->delete('tb_aset_keluar');
+    $this->db->trans_complete();
+    return $this->db->trans_status();
+  }
 
   // public function get_aset_keluar_with_join()
   // {
@@ -615,26 +738,6 @@ class M_admin extends CI_Model
   //   return $this->db->get()->result();
   // }
 
-  public function kembalikan_aset($kode_aset)
-  {
-    // Hapus data dari tb_aset_keluar
-    $this->db->where('kode_aset', $kode_aset);
-    $delete = $this->db->delete('tb_aset_keluar');
-
-    if ($delete) {
-      // Update status jadi 'tersedia' + ubah lokasi/tanggal_masuk
-      $this->db->where('kode_aset', $kode_aset);
-      $update = $this->db->update('tb_aset_masuk', [
-        'status'        => 'tersedia',      // ⬅️ ubah status
-        'tanggal_masuk' => date('Y-m-d'),   // reset tanggal masuk (opsional)
-        'lokasi'        => 'gudang'         // balik ke gudang
-      ]);
-
-      return $update;
-    }
-
-    return false;
-  }
 
   // Fungsi untuk menghitung jumlah aset masuk berdasarkan tipe laptop
   public function count_aset_masuk_laptop($search = null)

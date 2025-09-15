@@ -17,9 +17,95 @@ class Aksesoris extends CI_Controller
         parent::__construct();
         $this->load->model('M_aksesoris');
         $this->load->model('M_admin');
+        $this->load->model(('M_user'));
         $this->load->library('form_validation');
         $this->load->library('session');
         $this->load->helper(array('url', 'form'));
+    }
+
+    public function simpan()
+    {
+        // Validasi form
+        $this->form_validation->set_rules('merk', 'Merk', 'required');
+        $this->form_validation->set_rules('lokasi', 'Lokasi', 'required');
+        $this->form_validation->set_rules('kondisi', 'Kondisi', 'required');
+        $this->form_validation->set_rules('tanggal', 'Tanggal Masuk', 'required');
+
+        if ($this->form_validation->run() == FALSE) {
+            // ... kode form validation ...
+        } else {
+            $data_common = array(
+                'merk' => $this->input->post('merk'),
+                'lokasi' => $this->input->post('lokasi'),
+                'kondisi' => $this->input->post('kondisi'),
+                'tanggal' => $this->input->post('tanggal')
+            );
+
+            $count = 0;
+
+            // Simpan setiap aksesoris yang dipilih
+            if ($this->input->post('kode_c')) {
+                $data_c = $data_common;
+                $data_c['jenis'] = 'Charger';
+                $data_c['kode'] = $this->input->post('kode_c');
+                $new_id = $this->M_aksesoris->simpan_data($data_c);
+
+                // >>> LOG HISTORY <<<
+                log_insert(
+                    'tb_aset_aksesoris1',
+                    $data_c,
+                    'Menambah aksesoris Charger: ' . $data_c['merk'],
+                    $new_id
+                );
+                // >>> END LOG <<<
+
+                $count++;
+            }
+
+            if ($this->input->post('kode_h')) {
+                $data_h = $data_common;
+                $data_h['jenis'] = 'Headset';
+                $data_h['kode'] = $this->input->post('kode_h');
+                $new_id = $this->M_aksesoris->simpan_data($data_h);
+
+                // >>> LOG HISTORY <<<
+                log_insert(
+                    'tb_aset_aksesoris1',
+                    $data_h,
+                    'Menambah aksesoris Headset: ' . $data_h['merk'],
+                    $new_id
+                );
+                // >>> END LOG <<<
+
+                $count++;
+            }
+
+            if ($this->input->post('kode_m')) {
+                $data_m = $data_common;
+                $data_m['jenis'] = 'Mouse';
+                $data_m['kode'] = $this->input->post('kode_m');
+                $new_id = $this->M_aksesoris->simpan_data($data_m);
+
+                // >>> LOG HISTORY <<<
+                log_insert(
+                    'tb_aset_aksesoris1',
+                    $data_m,
+                    'Menambah aksesoris Mouse: ' . $data_m['merk'],
+                    $new_id
+                );
+                // >>> END LOG <<<
+
+                $count++;
+            }
+
+            if ($count > 0) {
+                $this->session->set_flashdata('success', $count . ' data aksesoris berhasil disimpan');
+            } else {
+                $this->session->set_flashdata('error', 'Tidak ada data aksesoris yang dipilih');
+            }
+
+            redirect('aksesoris/tabel_aksesoris_masuk');
+        }
     }
 
     // Tambahkan di Controller Aset
@@ -33,7 +119,6 @@ class Aksesoris extends CI_Controller
         $this->load->view('admin/aksesoris/daftar_aksesoris', $data);
         $this->load->view('footer/footer', $data);
     }
-
     public function masuk()
     {
         $data['title'] = 'Daftar Aksesoris';
@@ -66,65 +151,53 @@ class Aksesoris extends CI_Controller
         ));
     }
 
-    public function simpan()
+    // list aksesoris masuk
+    public function list_aksesoris()
     {
-        // Validasi form
-        $this->form_validation->set_rules('merk', 'Merk', 'required');
-        $this->form_validation->set_rules('lokasi', 'Lokasi', 'required');
-        $this->form_validation->set_rules('kondisi', 'Kondisi', 'required');
-        $this->form_validation->set_rules('tanggal_masuk', 'Tanggal Masuk', 'required');
+        $config = array();
+        $config['base_url'] = site_url('aksesoris/list_aksesoris');
+        $config['total_rows'] = $this->M_aksesoris->count_all_aksesoris_masuk($this->input->get('search'));
+        $config['per_page'] = $this->input->get('per_page') ?: 10;
+        $config['page_query_string'] = TRUE;
+        $config['query_string_segment'] = 'page';
+        $config['reuse_query_string'] = TRUE;
 
-        if ($this->form_validation->run() == FALSE) {
-            // Jika validasi gagal, tampilkan form kembali
-            $data['title'] = 'Input Data Aksesoris Masuk';
-            $data['aksesoris'] = $this->M_admin->get_all_aksesoris();
-            $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
-            $this->load->view('header/header', $data);
-            $this->load->view('admin/form_aksesoris/form_aksesoris_masuk', $data);
-            $this->load->view('footer/footer', $data);
-        } else {
-            // Simpan data ke database
-            $data_common = array(
-                'merk' => $this->input->post('merk'),
-                'lokasi' => $this->input->post('lokasi'),
-                'kondisi' => $this->input->post('kondisi'),
-                'tanggal_masuk' => $this->input->post('tanggal_masuk')
-            );
+        $config['full_tag_open'] = '<ul class="pagination">';
+        $config['full_tag_close'] = '</ul>';
+        $config['first_tag_open'] = '<li>';
+        $config['first_tag_close'] = '</li>';
+        $config['last_tag_open'] = '<li>';
+        $config['last_tag_close'] = '</li>';
+        $config['next_tag_open'] = '<li>';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_tag_open'] = '<li>';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="active"><a href="#">';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
 
-            $count = 0;
+        $this->pagination->initialize($config);
 
-            // Simpan setiap aksesoris yang dipilih
-            if ($this->input->post('kode_c')) {
-                $data_c = $data_common;
-                $data_c['jenis'] = 'Charger';
-                $data_c['kode'] = $this->input->post('kode_c');
-                $this->M_aksesoris->simpan_data($data_c);
-                $count++;
-            }
+        $page = $this->input->get('page') ?: 0;
+        $per_page = $this->input->get('per_page') ?: 10;
+        $search = $this->input->get('search');
 
-            if ($this->input->post('kode_h')) {
-                $data_h = $data_common;
-                $data_h['jenis'] = 'Headset';
-                $data_h['kode'] = $this->input->post('kode_h');
-                $this->M_aksesoris->simpan_data($data_h);
-                $count++;
-            }
+        // Parameter sorting
+        $sort_by = $this->input->get('sort_by') ?: 'tanggal';
+        $sort_order = $this->input->get('sort_order') ?: 'desc';
+        $data['title'] = 'Daftar Aksesoris Masuk';
+        $data['aksesoris'] = $this->M_aksesoris->get_aksesoris_masuk_paginated($per_page, $page, $search, $sort_by, $sort_order);
+        $data['pagination'] = $this->pagination->create_links();
+        $data['per_page'] = $per_page;
+        $data['search'] = $search;
+        $data['sort_by'] = $sort_by;
+        $data['sort_order'] = $sort_order;
+        $data['page'] = $page;
+        $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
 
-            if ($this->input->post('kode_m')) {
-                $data_m = $data_common;
-                $data_m['jenis'] = 'Mouse';
-                $data_m['kode'] = $this->input->post('kode_m');
-                $this->M_aksesoris->simpan_data($data_m);
-                $count++;
-            }
-
-            if ($count > 0) {
-                $this->session->set_flashdata('success', $count . ' data aksesoris berhasil disimpan');
-            } else {
-                $this->session->set_flashdata('error', 'Tidak ada data aksesoris yang dipilih');
-            }
-
-            redirect('aksesoris/masuk');
-        }
+        $this->load->view('header/header', $data);
+        $this->load->view('admin/tabel/tabel_aksesoris_masuk', $data);
+        $this->load->view('footer/footer', $data);
     }
 }

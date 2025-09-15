@@ -105,13 +105,12 @@ $route['aksesoris/get_next_numbers'] = 'aksesoris/get_next_numbers';
 $route['aksesoris/masuk_aksesoris'] = 'aksesoris/masuk';
 $route['aksesoris/list_aksesoris'] = 'aksesoris/list_aksesoris';
 $route['aksesoris/simpan'] = 'aksesoris/simpan';
-$route['aksesoris/list_aksesoris'] = 'aksesoris/list_aksesoris';
 
 // form master karyawan routes
-$route['master_user'] = 'karyawan/index';
-$route['master_user/tambah'] = 'karyawan/tambah';
-$route['master_user/edit/(:any)'] = 'karyawan/edit/$1';
-$route['master_user/simpan'] = 'karyawan/simpan';
+$route['karyawan'] = 'karyawan/list_karyawan';
+$route['karyawan/tambah'] = 'karyawan/tambah';
+$route['karyawan/edit/(:any)'] = 'karyawan/edit/$1';
+$route['karyawan/simpan'] = 'karyawan/simpan';
 
 // log helpers routes
 

@@ -17,7 +17,7 @@ class Admin extends CI_Controller
     parent::__construct();
     $this->load->model('M_admin');
     $this->load->model('M_user');
-    $this->load->model('M_log_history');
+    // $this->load->model('M_log_history');
     $this->load->library('upload');
     $this->load->helper('form');
     $this->load->library('form_validation');
@@ -39,26 +39,126 @@ class Admin extends CI_Controller
       $data['stockBarangKeluarCapitalPlace'] = $this->M_admin->numrows_capital_all_keluar('tb_aset_keluar');
       $data['dataUser'] = $this->M_admin->numrows('user');
 
-      // log history
-      $config['base_url'] = site_url('log_history/index');
-      $config['total_rows'] = $this->M_log_history->get_total_logs();
-      $config['per_page'] = 50;
-      $config['uri_segment'] = 3;
+      $filters = array();
+      if ($this->input->get('action_type')) {
+        $filters['action_type'] = $this->input->get('action_type');
+      }
+      if ($this->input->get('kode_aset')) {
+        $filters['kode_aset'] = $this->input->get('kode_aset');
+      }
+      if ($this->input->get('start_date')) {
+        $filters['start_date'] = $this->input->get('start_date');
+      }
+      if ($this->input->get('end_date')) {
+        $filters['end_date'] = $this->input->get('end_date');
+      }
+
+      // Pagination configuration
+      $config['base_url'] = base_url('admin/index');
+      $config['total_rows'] = $this->M_log_history->count_logs($filters);
+      $config['per_page'] = 5;
+      $config['uri_segment'] = 2;
+      $config['reuse_query_string'] = TRUE;
 
       $this->pagination->initialize($config);
 
-      $page = ($this->uri->segment(3)) ? $this->uri->segment(3) : 0;
-      $data['logs'] = $this->M_log_history->get_all_logs($config['per_page'], $page);
+      $page = ($this->uri->segment(2)) ? $this->uri->segment(2) : 0;
+
+      // Get log data
+      $logs = $this->M_log_history->get_logs($config['per_page'], $page, $filters);
+
+      $recent_activities = $this->M_log_history->get_recent_activities(5); // ← BUAT METHOD BARU
+
+
+      // Convert waktu ke WIB (GMT+7)
+      foreach ($logs as $log) {
+        $log->created_at = $this->convertToWIB($log->created_at);
+      }
+
+      $data['logs'] = $logs;
       $data['pagination'] = $this->pagination->create_links();
-      // end log history
+      $data['per_page'] = $config['per_page'];
+      // Get recent activities for dashboard widgets if needed
+      $recent_activities = $this->M_log_history->get_logs(5);
+
+      // Convert waktu recent activities ke WIB
+      foreach ($recent_activities as $activity) {
+        $activity->created_at = $this->convertToWIB($activity->created_at);
+      }
+
+      $data['recent_activities'] = $recent_activities;
 
       $this->load->view('header/header', $data);
       $this->load->view('admin/index', $data);
       $this->load->view('footer/footer');
     } else {
-      $this->load->view('header/header', $data);
+      $this->load->view('header/header');
       $this->load->view('login/login');
-      $this->load->view('footer/footer', $data);
+      $this->load->view('footer/footer');
+    }
+  }
+
+  public function export_logs()
+  {
+    // Check if user is logged in and has permission
+    // if (!$this->session->userdata('logged_in')) {
+    //   redirect('auth/login');
+    // }
+
+    $filters = array();
+    if ($this->input->get('action_type')) {
+      $filters['action_type'] = $this->input->get('action_type');
+    }
+    if ($this->input->get('kode_aset')) {
+      $filters['kode_aset'] = $this->input->get('kode_aset');
+    }
+    if ($this->input->get('start_date')) {
+      $filters['start_date'] = $this->input->get('start_date');
+    }
+    if ($this->input->get('end_date')) {
+      $filters['end_date'] = $this->input->get('end_date');
+    }
+
+    $logs = $this->M_log_history->get_logs(0, 0, $filters); // Get all logs
+
+    // Prepare CSV data
+    $csv_data = "Waktu,User,Aksi,Tabel,Deskripsi,Kode Aset\n";
+
+    foreach ($logs as $log) {
+      $username = $log->username ? $log->username : 'System';
+      $waktuWIB = $this->convertToWIB($log->created_at);
+      $csv_data .= "\"{$waktuWIB}\",\"{$username}\",\"{$log->action_type}\",\"{$log->table_name}\",\"{$log->description}\",\"{$log->kode_aset}\"\n";
+    }
+
+    // Force download
+    header('Content-Type: application/csv');
+    header('Content-Disposition: attachment; filename="log_history_' . date('Y-m-d') . '.csv"');
+    echo $csv_data;
+    exit();
+  }
+
+  // Helper function to convert time to WIB (GMT+7)
+  private function convertToWIB($datetime)
+  {
+    if (empty($datetime)) {
+      return $datetime;
+    }
+
+    try {
+      $date = new DateTime($datetime);
+
+      $timezone = $date->getTimezone()->getName();
+      error_log("Original timezone: " . $timezone);
+
+      if ($timezone === 'Asia/Jakarta' || $timezone === '+07:00') {
+        return $date->format('Y-m-d H:i:s');
+      }
+
+      $date->setTimezone(new DateTimeZone('Asia/Jakarta'));
+      return $date->format('Y-m-d H:i:s');
+    } catch (Exception $e) {
+      error_log("Error: " . $e->getMessage());
+      return $datetime;
     }
   }
 

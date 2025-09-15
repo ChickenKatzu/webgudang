@@ -26,7 +26,7 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <a href="<?php echo site_url('master_user/tambah'); ?>" class="btn btn-primary">Tambah Karyawan</a>
+                    <a href="<?php echo site_url('karyawan/tambah'); ?>" class="btn btn-primary">Tambah Karyawan</a>
                     <a href="<?php echo site_url('admin'); ?>" class="btn btn-default">Kembali</a>
                 </div>
                 <div class="col-md-6">
@@ -44,7 +44,7 @@
                     <tr>
                         <th>No</th>
                         <th>
-                            <a href="<?= site_url('karyawan/list?' . http_build_query(array_merge($_GET, ['sort_by' => 'nama_karyawan', 'sort_order' => ($sort_by == 'nama_karyawan' && $sort_order == 'asc') ? 'desc' : 'asc']))); ?>">
+                            <a href="<?= site_url('karyawan/list_karyawan?' . http_build_query(array_merge($_GET, ['sort_by' => 'nama_karyawan', 'sort_order' => ($sort_by == 'nama_karyawan' && $sort_order == 'asc') ? 'desc' : 'asc']))); ?>">
                                 Nama Karyawan
                                 <?php if ($sort_by == 'nama_karyawan'): ?>
                                     <i class="fa fa-sort-<?= $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
@@ -53,11 +53,54 @@
                                 <?php endif; ?>
                             </a>
                         </th>
-                        <th>Jabatan</th>
-                        <th>Atasan</th>
-                        <th>Status</th>
-                        <th>Created At</th>
-                        <th>Updated At</th>
+                        <th>
+                            <a href="<?= site_url('karyawan/list_karyawan?' . http_build_query(array_merge($_GET, ['sort_by' => 'jabatan', 'sort_order' => ($sort_by == 'jabatan' && $sort_order == 'asc') ? 'desc' : 'asc']))); ?>">
+                                Jabatan
+                                <?php if ($sort_by == 'jabatan'): ?>
+                                    <i class="fa fa-sort-<?= $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                                <?php else: ?>
+                                    <i class="fa fa-sort"></i>
+                                <?php endif; ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="<?= site_url('karyawan/list_karyawan?' . http_build_query(array_merge($_GET, ['sort_by' => 'atasan', 'sort_order' => ($sort_by == 'atasan' && $sort_order == 'asc') ? 'desc' : 'asc']))); ?>">
+                                Atasan
+                                <?php if ($sort_by == 'atasan'): ?>
+                                    <i class="fa fa-sort-<?= $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                                <?php else: ?>
+                                    <i class="fa fa-sort"></i>
+                                <?php endif; ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="<?= site_url('karyawan/list_karyawan?' . http_build_query(array_merge($_GET, ['sort_by' => 'status', 'sort_order' => ($sort_by == 'status' && $sort_order == 'asc') ? 'desc' : 'asc']))); ?>">
+                                Status
+                                <?php if ($sort_by == 'status'): ?>
+                                    <i class="fa fa-sort-<?= $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                                <?php else: ?>
+                                    <i class="fa fa-sort"></i>
+                                <?php endif; ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="<?= site_url('karyawan/list_karyawan?' . http_build_query(array_merge($_GET, ['sort_by' => 'created_at', 'sort_order' => ($sort_by == 'created_at' && $sort_order == 'asc') ? 'desc' : 'asc']))); ?>">
+                                Created At
+                                <?php if ($sort_by == 'created_at'): ?>
+                                    <i class="fa fa-sort-<?= $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                                <?php else: ?>
+                                    <i class="fa fa-sort"></i>
+                                <?php endif; ?>
+                        </th>
+                        <th>
+                            <a href="<?= site_url('karyawan/list_karyawan?' . http_build_query(array_merge($_GET, ['sort_by' => 'updated_at', 'sort_order' => ($sort_by == 'updated_at' && $sort_order == 'asc') ? 'desc' : 'asc']))); ?>">
+                                Updated At
+                                <?php if ($sort_by == 'updated_at'): ?>
+                                    <i class="fa fa-sort-<?= $sort_order == 'asc' ? 'asc' : 'desc'; ?>"></i>
+                                <?php else: ?>
+                                    <i class="fa fa-sort"></i>
+                                <?php endif; ?>
+                        </th>
                         <th>Aksi</th>
                     </tr>
                 </thead>

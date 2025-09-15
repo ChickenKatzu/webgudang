@@ -104,7 +104,6 @@
           </h1>
         </div>
         <div class="box-body">
-          <!-- Small boxes (Stat box) -->
           <div class="row">
             <div class="col-lg-3 col-xs-6">
               <!-- small box -->
@@ -272,101 +271,155 @@
     <div class="col-md-12">
       <div class="box box-primary">
         <div class="box-header with-border">
-          <h1 class="box-title">Filter Log History</h1>
+          <h3 class="box-title">Log History - Aktivitas Sistem</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+              <i class="fa fa-minus"></i>
+            </button>
+          </div>
         </div>
         <div class="box-body">
-          <form method="get" action="<?php echo site_url('log_history/filter'); ?>">
+          <!-- Filter Form -->
+          <form method="get" action="<?php echo site_url('admin'); ?>">
             <div class="row">
               <div class="col-md-3">
                 <div class="form-group">
                   <label>Jenis Aksi</label>
                   <select name="action_type" class="form-control">
                     <option value="">-- Semua Aksi --</option>
-                    <option value="insert">Tambah Data</option>
-                    <option value="update">Update Data</option>
-                    <option value="delete">Hapus Data</option>
-                    <option value="login">Login</option>
-                    <option value="logout">Logout</option>
-                    <option value="pinjam">Peminjaman</option>
-                    <option value="kembali">Pengembalian</option>
-                    <option value="mutasi">Mutasi</option>
+                    <option value="insert" <?= ($this->input->get('action_type') == 'insert') ? 'selected' : ''; ?>>Tambah Data</option>
+                    <option value="update" <?= ($this->input->get('action_type') == 'update') ? 'selected' : ''; ?>>Update Data</option>
+                    <option value="delete" <?= ($this->input->get('action_type') == 'delete') ? 'selected' : ''; ?>>Hapus Data</option>
+                    <option value="login" <?= ($this->input->get('action_type') == 'login') ? 'selected' : ''; ?>>Login</option>
+                    <option value="logout" <?= ($this->input->get('action_type') == 'logout') ? 'selected' : ''; ?>>Logout</option>
+                    <option value="pinjam" <?= ($this->input->get('action_type') == 'pinjam') ? 'selected' : ''; ?>>Peminjaman</option>
+                    <option value="kembali" <?= ($this->input->get('action_type') == 'kembali') ? 'selected' : ''; ?>>Pengembalian</option>
+                    <option value="mutasi" <?= ($this->input->get('action_type') == 'mutasi') ? 'selected' : ''; ?>>Mutasi</option>
                   </select>
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="form-group">
                   <label>Kode Aset</label>
-                  <input type="text" name="kode_aset" class="form-control" placeholder="Masukkan kode aset">
+                  <input type="text" name="kode_aset" class="form-control" placeholder="Masukkan kode aset" value="<?= $this->input->get('kode_aset'); ?>">
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="form-group">
                   <label>Tanggal Mulai</label>
-                  <input type="date" name="start_date" class="form-control">
+                  <input type="date" name="start_date" class="form-control" value="<?= $this->input->get('start_date'); ?>">
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="form-group">
                   <label>Tanggal Akhir</label>
-                  <input type="date" name="end_date" class="form-control">
+                  <input type="date" name="end_date" class="form-control" value="<?= $this->input->get('end_date'); ?>">
                 </div>
               </div>
             </div>
             <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i> Filter</button>
-            <a href="<?php echo site_url('log_history/export'); ?>" class="btn btn-success"><i class="fa fa-download"></i> Export CSV</a>
+            <a href="<?php echo site_url('admin/export_logs') . '?' . http_build_query($this->input->get()); ?>" class="btn btn-success">
+              <i class="fa fa-download"></i> Export CSV
+            </a>
           </form>
-        </div>
-      </div>
+          <hr>
 
-      <div class="box">
-        <div class="box-header">
-          <h3 class="box-title">Daftar Log History</h3>
-        </div>
-        <div class="box-body">
+          <!-- Log Table -->
           <div class="table-responsive">
             <table class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <th>Tanggal</th>
-                  <th>User</th>
-                  <th>Aksi</th>
-                  <th>Tabel</th>
-                  <th>Kode Aset</th>
-                  <th>Deskripsi</th>
+                  <th>No</th>
+                  <th width="15%">Waktu</th>
+                  <th width="10%">User</th>
+                  <th width="10%">Aksi</th>
+                  <th width="10%">Tabel</th>
+                  <th width="30%">Deskripsi</th>
+                  <th width="10%">Kode Aset</th>
+                  <th width="15%">Detail</th>
                 </tr>
               </thead>
               <tbody>
                 <?php if (!empty($logs)): ?>
+                  <?php $no = 1 + (($this->input->get('page') ? $this->input->get('page') - 1 : 0) * $per_page); ?>
                   <?php foreach ($logs as $log): ?>
                     <tr>
-                      <td><?php echo date('d/m/Y H:i:s', strtotime($log->created_at)); ?></td>
-                      <td><?php echo $log->username . ' (' . $log->nama_karyawan . ')'; ?></td>
+                      <td><?php echo $no; ?></td>
+                      <td><?= date('d M Y H:i:s', strtotime($log->created_at)); ?></td>
+                      <td>
+                        <?= $log->username ? $log->username : 'System'; ?>
+                        <?php if ($log->id_karyawan && $log->nama_karyawan): ?>
+                          <br><small>(<?= $log->nama_karyawan; ?>)</small>
+                        <?php endif; ?>
+                      </td>
                       <td>
                         <?php
-                        $badge_color = 'default';
-                        if ($log->action_type == 'insert') $badge_color = 'success';
-                        if ($log->action_type == 'update') $badge_color = 'info';
-                        if ($log->action_type == 'delete') $badge_color = 'danger';
-                        if ($log->action_type == 'login') $badge_color = 'primary';
+                        $badge_class = 'default';
+                        if ($log->action_type == 'insert') $badge_class = 'success';
+                        elseif ($log->action_type == 'update') $badge_class = 'warning';
+                        elseif ($log->action_type == 'delete') $badge_class = 'danger';
+                        elseif ($log->action_type == 'login') $badge_class = 'info';
+                        elseif ($log->action_type == 'logout') $badge_class = 'primary';
+                        elseif ($log->action_type == 'pinjam') $badge_class = 'primary';
+                        elseif ($log->action_type == 'kembali') $badge_class = 'success';
+                        elseif ($log->action_type == 'mutasi') $badge_class = 'info';
                         ?>
-                        <span class="badge bg-<?php echo $badge_color; ?>">
-                          <?php echo strtoupper($log->action_type); ?>
-                        </span>
+                        <span class="label label-<?= $badge_class; ?>"><?= $log->action_type; ?></span>
                       </td>
-                      <td><?php echo $log->table_name; ?></td>
-                      <td><?php echo $log->kode_aset; ?></td>
-                      <td><?php echo $log->description; ?></td>
+                      <td><?= $log->table_name; ?></td>
+                      <td><?= $log->description; ?></td>
+                      <td><?= $log->kode_aset; ?></td>
+                      <td>
+                        <?php if (!empty($log->old_data) || !empty($log->new_data)): ?>
+                          <button type="button" class="btn btn-xs btn-info" data-toggle="modal" data-target="#modalDetail-<?= $log->id_log; ?>">
+                            Lihat Detail
+                          </button>
+
+                          <!-- Modal -->
+                          <div class="modal fade" id="modalDetail-<?= $log->id_log; ?>" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-lg" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                  <h4 class="modal-title">Detail Log #<?= $log->id_log; ?></h4>
+                                </div>
+                                <div class="modal-body">
+                                  <?php if (!empty($log->old_data)): ?>
+                                    <h5>Data Lama:</h5>
+                                    <pre class="pre-scrollable" style="max-height: 200px;"><?= json_encode(json_decode($log->old_data), JSON_PRETTY_PRINT); ?></pre>
+                                  <?php endif; ?>
+
+                                  <?php if (!empty($log->new_data)): ?>
+                                    <h5>Data Baru:</h5>
+                                    <pre class="pre-scrollable" style="max-height: 200px;"><?= json_encode(json_decode($log->new_data), JSON_PRETTY_PRINT); ?></pre>
+                                  <?php endif; ?>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        <?php else: ?>
+                          <span class="text-muted">Tidak ada data detail</span>
+                        <?php endif; ?>
+                      </td>
                     </tr>
+                    <?php $no++; ?>
                   <?php endforeach; ?>
                 <?php else: ?>
                   <tr>
-                    <td colspan="6" class="text-center">Tidak ada data log history</td>
+                    <td colspan="8" class="text-center">Tidak ada data log history</td>
                   </tr>
                 <?php endif; ?>
               </tbody>
             </table>
           </div>
-          <?php echo $pagination; ?>
+
+          <!-- Pagination -->
+          <div class="text-center">
+            <?= $pagination; ?>
+          </div>
         </div>
       </div>
     </div>

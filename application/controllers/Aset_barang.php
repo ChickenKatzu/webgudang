@@ -11,8 +11,73 @@ class Aset_barang extends CI_Controller
         $this->load->model('M_log_history');
         $this->load->model('M_user');
         $this->load->model('M_admin');
+        $this->load->model('M_aksesoris');
         $this->load->library('form_validation');
-        $this->load->helper(array('url', 'form', 'log_helper', 'privilege_helper'));
+        $this->load->helper(array('url', 'form', 'privilege_helper'));
+    }
+
+    // Form Aset Keluar
+    public function keluar($kode_aset = null)
+    {
+        if ($_POST) {
+            $this->form_validation->set_rules('kode_aset', 'Kode Aset', 'required');
+            $this->form_validation->set_rules('id_karyawan', 'Nama Penerima', 'required');
+            $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'required');
+
+            if ($this->form_validation->run()) {
+                // ambil data karyawan untuk simpan nama & jabatan
+                $karyawan = $this->M_admin->get_karyawan_by_id($this->input->post('id_karyawan'));
+
+                $data = [
+                    'kode_aset'       => $this->input->post('kode_aset'),
+                    'id_karyawan'     => $karyawan->id_karyawan,
+                    'id_departemen'   => null,
+                    'nama_penerima'   => $karyawan->nama_karyawan,
+                    'posisi_penerima' => $karyawan->jabatan,
+                    'tanggal_keluar'  => $this->input->post('tanggal_keluar'),
+                    'catatan'         => $this->input->post('catatan') // Perbaiki spasi berlebih
+                ];
+
+                // insert ke aset keluar
+                if ($this->M_admin->create_aset_keluar($data)) {
+                    // update status aset jadi dipinjam
+                    $this->M_admin->update_status_aset($this->input->post('kode_aset'), 'dipinjam');
+
+                    // simpan aksesoris kalau ada
+                    if ($this->input->post('aksesoris')) {
+                        foreach ($this->input->post('aksesoris') as $id_aksesoris) {
+                            if (!empty($id_aksesoris)) {
+                                $this->M_aksesoris->pinjam_aksesoris($this->input->post('kode_aset'), $id_aksesoris);
+                            }
+                        }
+                    }
+
+                    // >>> LOG HISTORY <<<
+                    log_pinjam(
+                        $this->input->post('kode_aset'),
+                        $karyawan->id_karyawan,
+                        'Peminjaman aset: ' . $this->input->post('kode_aset') . ' oleh ' . $karyawan->nama_karyawan
+                    );
+                    // >>> END LOG <<<
+
+                    $this->session->set_flashdata('success', 'Aset berhasil dikeluarkan');
+                    redirect('aset/list_keluar');
+                }
+            }
+        }
+
+        $data['title'] = 'Form Aset Keluar';
+        $data['asset'] = $kode_aset ? $this->M_admin->get_aset_masuk_by_kode($kode_aset) : null;
+        $data['karyawan'] = $this->M_admin->get_all_karyawan_aktif(); // untuk dropdown
+
+        // UBAH INI: Ambil aksesoris yang tersedia saja
+        $data['aksesoris'] = $this->M_aksesoris->get_aksesoris_tersedia(); // untuk dropdown aksesoris
+
+        $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
+
+        $this->load->view('header/header', $data);
+        $this->load->view('admin/perpindahan_barang/form_aset_keluar', $data);
+        $this->load->view('footer/footer', $data);
     }
 
     // aset barang masuk
@@ -37,6 +102,15 @@ class Aset_barang extends CI_Controller
                 ];
 
                 if ($this->M_admin->create_aset_masuk($data)) {
+                    // >>> LOG HISTORY <<<
+                    log_insert('tb_aset_masuk', $data, 'Menambah aset baru: ' . $data['nama_barang'], $kode_aset);
+                    // >>> END LOG <<<
+
+                    $this->session->set_flashdata('success', 'Aset berhasil ditambahkan');
+                    redirect('aset/list_masuk');
+                }
+                // insert aset 
+                if ($this->M_admin->create_aset_masuk($data)) {
                     $this->session->set_flashdata('success', 'Aset berhasil ditambahkan');
                     redirect('aset/list_masuk');
                 }
@@ -51,6 +125,20 @@ class Aset_barang extends CI_Controller
         $this->load->view('footer/footer', $data);
     }
 
+    // kembalikan aset
+    public function kembalikan($kode_aset)
+    {
+        if ($this->M_admin->kembalikan_aset($kode_aset)) {
+            // >>> LOG HISTORY <<<
+            log_kembali($kode_aset, 'Pengembalian aset: ' . $kode_aset);
+            // >>> END LOG <<<
+
+            $this->session->set_flashdata('success', 'Aset berhasil dikembalikan');
+        } else {
+            $this->session->set_flashdata('error', 'Gagal mengembalikan aset');
+        }
+        redirect('aset/list_keluar');
+    }
     // aset list masuk
     public function list_masuk()
     {
@@ -102,58 +190,52 @@ class Aset_barang extends CI_Controller
         $this->load->view('footer/footer', $data);
     }
 
-    // Form Aset Keluar
-    public function keluar($kode_aset = null)
-    {
-        if ($_POST) {
-            $this->form_validation->set_rules('kode_aset', 'Kode Aset', 'required');
-            $this->form_validation->set_rules('id_karyawan', 'Nama Penerima', 'required');
-            $this->form_validation->set_rules('tanggal_keluar', 'Tanggal Keluar', 'required');
 
-            if ($this->form_validation->run()) {
-                // ambil data karyawan untuk simpan nama & jabatan
-                $karyawan = $this->M_admin->get_karyawan_by_id($this->input->post('id_karyawan'));
+    // // List Aset Keluar dengan pagination dan search
+    // public function list_keluar()
+    // {
+    //     $config = array();
+    //     $config['base_url'] = site_url('aset/list_keluar');
+    //     $config['total_rows'] = $this->M_admin->count_all_aset_keluar($this->input->get('search'));
+    //     $config['per_page'] = $this->input->get('per_page') ?: 10;
+    //     $config['page_query_string'] = TRUE;
+    //     $config['query_string_segment'] = 'page';
+    //     $config['reuse_query_string'] = TRUE;
 
-                $data = [
-                    'kode_aset'       => $this->input->post('kode_aset'),
-                    'id_karyawan'     => $karyawan->id_karyawan,
-                    'id_departemen'   => null, // kalau ada tabel departemen bisa diisi
-                    'nama_penerima'   => $karyawan->nama_karyawan,
-                    'posisi_penerima' => $karyawan->jabatan,
-                    'tanggal_keluar'  => $this->input->post('tanggal_keluar'),
-                    'catatan        ' => $this->input->post('catatan')
-                ];
+    //     $config['full_tag_open'] = '<ul class="pagination">';
+    //     $config['full_tag_close'] = '</ul>';
+    //     $config['first_tag_open'] = '<li>';
+    //     $config['first_tag_close'] = '</li>';
+    //     $config['last_tag_open'] = '<li>';
+    //     $config['last_tag_close'] = '</li>';
+    //     $config['next_tag_open'] = '<li>';
+    //     $config['next_tag_close'] = '</li>';
+    //     $config['prev_tag_open'] = '<li>';
+    //     $config['prev_tag_close'] = '</li>';
+    //     $config['cur_tag_open'] = '<li class="active"><a href="#">';
+    //     $config['cur_tag_close'] = '</a></li>';
+    //     $config['num_tag_open'] = '<li>';
+    //     $config['num_tag_close'] = '</li>';
 
-                // insert ke aset keluar
-                if ($this->M_admin->create_aset_keluar($data)) {
-                    // update status aset jadi dipinjam
-                    $this->M_admin->update_status_aset($this->input->post('kode_aset'), 'dipinjam');
+    //     $this->pagination->initialize($config);
 
-                    // simpan aksesoris kalau ada
-                    if ($this->input->post('aksesoris')) {
-                        foreach ($this->input->post('aksesoris') as $id_aksesoris) {
-                            $this->M_admin->pinjam_aksesoris($this->input->post('kode_aset'), $id_aksesoris);
-                        }
-                    }
+    //     $page = $this->input->get('page') ?: 0;
+    //     $per_page = $this->input->get('per_page') ?: 10;
+    //     $search = $this->input->get('search');
 
-                    $this->session->set_flashdata('success', 'Aset berhasil dikeluarkan');
-                    redirect('aset/list_keluar');
-                }
-            }
-        }
+    //     $data['title'] = 'Daftar Aset Keluar';
+    //     $data['assets'] = $this->M_admin->get_aset_keluar_paginated($per_page, $page, $search);
+    //     $data['pagination'] = $this->pagination->create_links();
+    //     $data['per_page'] = $per_page;
+    //     $data['search'] = $search;
+    //     $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
 
-        $data['title'] = 'Form Aset Keluar';
-        $data['asset'] = $kode_aset ? $this->M_admin->get_aset_masuk_by_kode($kode_aset) : null;
-        $data['karyawan'] = $this->M_admin->get_all_karyawan_aktif(); // untuk dropdown
-        $data['aksesoris'] = $this->M_admin->get_all_aksesoris(); // untuk checkbox aksesoris
-        $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
 
-        $this->load->view('header/header', $data);
-        $this->load->view('admin/perpindahan_barang/form_aset_keluar', $data);
-        $this->load->view('footer/footer', $data);
-    }
+    //     $this->load->view('header/header', $data);
+    //     $this->load->view('admin/tabel/tabel_aset_keluar', $data);
+    //     $this->load->view('footer/footer', $data);
+    // }
 
-    // List Aset Keluar dengan pagination dan search
     public function list_keluar()
     {
         $config = array();
@@ -187,28 +269,23 @@ class Aset_barang extends CI_Controller
 
         $data['title'] = 'Daftar Aset Keluar';
         $data['assets'] = $this->M_admin->get_aset_keluar_paginated($per_page, $page, $search);
+
+        // Ambil detail aksesoris untuk setiap aset
+        if (!empty($data['assets'])) {
+            foreach ($data['assets'] as $asset) {
+                $asset->detail_aksesoris = $this->M_admin->get_aksesoris_by_kode_aset($asset->kode_aset);
+            }
+        }
+
         $data['pagination'] = $this->pagination->create_links();
         $data['per_page'] = $per_page;
         $data['search'] = $search;
         $data['avatar'] = $this->M_admin->get_data_gambar('tb_upload_gambar_user', $this->session->userdata('name'));
 
-
         $this->load->view('header/header', $data);
         $this->load->view('admin/tabel/tabel_aset_keluar', $data);
         $this->load->view('footer/footer', $data);
     }
-
-    // kembalikan aset
-    public function kembalikan($kode_aset)
-    {
-        if ($this->M_admin->kembalikan_aset($kode_aset)) {
-            $this->session->set_flashdata('success', 'Aset berhasil dikembalikan');
-        } else {
-            $this->session->set_flashdata('error', 'Gagal mengembalikan aset');
-        }
-        redirect('aset/list_keluar');
-    }
-
 
     // table table aset masuk keluar per kategori
     // list aset masuk laptop
